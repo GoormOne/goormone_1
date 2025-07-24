@@ -1,8 +1,8 @@
 ---
-name: "\U0001F4C4 docs"
-about: docs
-title: "[DOCS]"
-labels: docs
+name: "✨feature"
+about: feature
+title: "[FEAT]"
+labels: feature
 assignees: ''
 
 ---

@@ -1,5 +1,5 @@
 ---
-name: "\U0001F6E0️ fix"
+name: "\U0001F6E0️fix"
 about: fix
 title: "[FIX]"
 labels: fix
