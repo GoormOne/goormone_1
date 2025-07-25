@@ -35,3 +35,4 @@ out/
 
 ### VS Code ###
 .vscode/
+.DS_Store # 앞으로 추적되지 않도록
