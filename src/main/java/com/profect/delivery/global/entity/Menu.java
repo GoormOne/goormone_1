@@ -1,4 +1,4 @@
-package com.profect.delivery.menu.entity;
+package com.profect.delivery.global.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
