@@ -1,9 +1,10 @@
 package com.profect.delivery.domain.store.controller;
 
 
+import com.profect.delivery.domain.store.dto.response.RegionDto;
+import com.profect.delivery.domain.store.dto.response.RegionListDto;
 import com.profect.delivery.domain.store.dto.response.StoreDto;
 import com.profect.delivery.global.DTO.ErrorResponse;
-import com.profect.delivery.domain.store.dto.request.RegionDto;
 import com.profect.delivery.domain.store.dto.request.StoreRegisterDto;
 import com.profect.delivery.domain.store.service.StoreService;
 import com.profect.delivery.global.DTO.ApiResponse;
@@ -13,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -80,12 +83,23 @@ public class StoreController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-//    @GetMapping("/{storeId}/regions")
-//    public ResponseEntity<ResponseDto<Object[]>> getStoreRegions(
-//            @PathVariable String storeId
-//    ){
-//        return ResponseEntity.ok().body(ResponseDto.success());
-//    }
+    @GetMapping("/{storeId}/regions")
+    public ResponseEntity<ApiResponse<RegionListDto>> getStoreRegions(
+            @PathVariable String storeId
+    ) {
+        try {
+            RegionListDto regionListDto = storeService.getRegions(storeId);
+            ApiResponse<RegionListDto> response = ApiResponse.success(regionListDto);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            ErrorResponse error = new ErrorResponse();
+            error.setCode(HttpStatus.NOT_FOUND.value());
+            error.setMessage(e.getMessage());
+            ApiResponse<RegionListDto> response = ApiResponse.failure(error);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+    }
+
 //
 //    @PostMapping("/{storeId}/regions")
 //    public ResponseEntity<ResponseDto<Void>> registerStoreRegion(

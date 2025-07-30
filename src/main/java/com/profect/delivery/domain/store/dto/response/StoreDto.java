@@ -41,4 +41,10 @@ public class StoreDto {
         private String store_latitude;
         private String store_longtitude;
     }
+
+//    public static record RegionDto(
+//            List<String> regionIds
+//    )  {
+//
+//    }
 }

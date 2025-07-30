@@ -1,6 +1,8 @@
 package com.profect.delivery.domain.store.service;
 
 import com.profect.delivery.domain.store.dto.request.StoreRegisterDto;
+import com.profect.delivery.domain.store.dto.response.RegionDto;
+import com.profect.delivery.domain.store.dto.response.RegionListDto;
 import com.profect.delivery.domain.store.dto.response.StoreDto;
 import com.profect.delivery.domain.store.dto.response.StoreReponseDto;
 import com.profect.delivery.domain.store.repository.StoreCategoryRepository;
@@ -10,18 +12,20 @@ import com.profect.delivery.global.entity.StoreCategory;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class StoreService{
+public class StoreService {
     private final StoreRepository storeRepository;
     private final StoreCategoryRepository storeCategoryRepository;
-
 
 
     //public void deleteStore(final String storeId) {}
@@ -62,27 +66,28 @@ public class StoreService{
         System.out.println("category in DTO: " + storeRegisterDto.getCategory());
         StoreCategory storeCategory = storeCategoryRepository.findByStoresCategory(storeRegisterDto.getCategory())
                 .orElseThrow(() -> new RuntimeException("Store category not found"));
-            String dummyUserId = "user002";
-            Store store = Store.builder()
-                    .storeId(UUID.randomUUID())
-                    .userId(dummyUserId)
-                    .isBanned(false)
-                    .createdBy(dummyUserId)
-                    .storeName(storeRegisterDto.getStoreName())
-                    .storeDescription(storeRegisterDto.getStoreDescription())
-                    .storesCategoryId(storeCategory.getStoresCategoryId())
-                    .address1(storeRegisterDto.getAddress1())
-                    .address2(storeRegisterDto.getAddress2())
-                    .zipCd(storeRegisterDto.getZipCd())
-                    .storePhone(storeRegisterDto.getStorePhone())
-                    .storeLatitude(storeRegisterDto.getStoreLatitude())
-                    .storeLongitude(storeRegisterDto.getStoreLongitude())
-                    .build();
+        String dummyUserId = "user002";
+        Store store = Store.builder()
+                .storeId(UUID.randomUUID())
+                .userId(dummyUserId)
+                .isBanned(false)
+                .createdBy(dummyUserId)
+                .storeName(storeRegisterDto.getStoreName())
+                .storeDescription(storeRegisterDto.getStoreDescription())
+                .storesCategoryId(storeCategory.getStoresCategoryId())
+                .address1(storeRegisterDto.getAddress1())
+                .address2(storeRegisterDto.getAddress2())
+                .zipCd(storeRegisterDto.getZipCd())
+                .storePhone(storeRegisterDto.getStorePhone())
+                .storeLatitude(storeRegisterDto.getStoreLatitude())
+                .storeLongitude(storeRegisterDto.getStoreLongitude())
+                .build();
 
-            return storeRepository.save(store);
+        return storeRepository.save(store);
 
 
     }
+
     @Transactional
     public boolean deleteStore(String storeId) {
         Optional<Store> storeOptional = storeRepository.findByStoreId(UUID.fromString(storeId));
@@ -99,7 +104,24 @@ public class StoreService{
         //storeRepository.delete(store.get());
         return true;
     }
+
+    public RegionListDto getRegions(String storeId) {
+        Store store = storeRepository.findByStoreId(UUID.fromString(storeId))
+                .orElseThrow(() -> new RuntimeException("Store not found"));
+
+        List<RegionDto> regionDtos = store.getRegions().stream()
+                .map(region -> new RegionDto(
+                        region.getRegionId().toString(),
+                        region.getRegion1DepthName() + " " +
+                                region.getRegion2DepthName() + " " +
+                                region.getRegion3DepthName()
+                ))
+                .collect(Collectors.toList());
+
+        return new RegionListDto(regionDtos);
+    }
 }
+
 
 //
 //    public Optional<Store> getStoreById(Long storeid) {
