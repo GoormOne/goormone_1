@@ -2,6 +2,8 @@ package com.profect.delivery.global.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedBy;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -54,6 +56,8 @@ public class Store {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
+
+    @CreatedBy
     @Column(name = "created_by", length = 10, nullable = false)
     private String createdBy;
 

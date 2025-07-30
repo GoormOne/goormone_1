@@ -12,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -84,12 +85,19 @@ public class StoreService{
     }
     @Transactional
     public boolean deleteStore(String storeId) {
-        Optional<Store> store = storeRepository.findByStoreId(UUID.fromString(storeId));
-        if (store.isPresent()) {
-            storeRepository.delete(store.get());
-            return true;
+        Optional<Store> storeOptional = storeRepository.findByStoreId(UUID.fromString(storeId));
+
+        if (storeOptional.isEmpty()) {
+
+            return false;
         }
-        return false;
+        Store store = storeOptional.get();
+        //soft delete방법 사용
+        store.setDeletedAt(LocalDateTime.now());
+        store.setDeletedBy(store.getUserId());
+        store.setDeletedReason("사용자 요청으로 인한 삭제");
+        //storeRepository.delete(store.get());
+        return true;
     }
 }
 
