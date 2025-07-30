@@ -6,6 +6,8 @@ import org.springframework.data.annotation.CreatedBy;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -57,6 +59,14 @@ public class Store {
     private LocalDateTime createdAt;
 
 
+    @ManyToMany
+    @JoinTable(
+            name = "p_stores_regions",
+            joinColumns = @JoinColumn(name = "store_id"),
+            inverseJoinColumns = @JoinColumn(name = "region_id")
+    )
+    private List<Region> regions = new ArrayList<>();
+
     @CreatedBy
     @Column(name = "created_by", length = 10, nullable = false)
     private String createdBy;
@@ -76,8 +86,5 @@ public class Store {
     @Column(name = "deleted_rs", length = 100)
     private String deletedReason;
 
-    @PrePersist
-    public void prePersist() {
-        this.createdAt = LocalDateTime.now();
-    }
+
 }
