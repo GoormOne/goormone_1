@@ -1,26 +1,30 @@
-CREATE TYPE "role_type" AS ENUM (
-  'CUSTOMER',
-  'OWNER',
-  'MANAGER',
-  'MASTER'
-);
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'role_type') THEN
+CREATE TYPE role_type AS ENUM ('CUSTOMER', 'OWNER', 'MANAGER', 'MASTER');
+END IF;
+END;
+$$;
 
-CREATE TYPE "cart_status" AS ENUM (
-  'ACTIVE',
-  'ORDERED',
-  'ABANDONED'
-);
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'cart_status') THEN
+CREATE TYPE cart_status AS ENUM ('ACTIVE', 'ORDERED', 'ABANDONED');
+END IF;
+END;
+$$;
 
-CREATE TYPE "payment_method" AS ENUM (
-  'CARD'
-);
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'payment_method') THEN
+CREATE TYPE payment_method AS ENUM ('CARD');
+END IF;
+END;
+$$;
 
-CREATE TYPE "payment_result" AS ENUM (
-  'PENDING',
-  'SUCCESS',
-  'CANCELED',
-  'FAILED'
-);
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'payment_result') THEN
+CREATE TYPE payment_result AS ENUM ('PENDING', 'SUCCESS', 'CANCELED', 'FAILED');
+END IF;
+END;
+$$;
 
 CREATE TABLE "p_users" (
   "user_id" varchar(10) NOT NULL PRIMARY KEY,

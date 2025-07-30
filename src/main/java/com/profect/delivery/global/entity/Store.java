@@ -49,13 +49,12 @@ public class Store {
     @Column(name = "store_longitude", precision = 10, scale = 6)
     private BigDecimal storeLongitude;
 
-    @Column(name = "is_banned")
-    private Boolean isBanned;
-
-    @Column(name = "created_at")
+    @Column(name = "is_banned", nullable = false)
+    private Boolean isBanned = false;
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "created_by", length = 10)
+    @Column(name = "created_by", length = 10, nullable = false)
     private String createdBy;
 
     @Column(name = "updated_at")
@@ -72,4 +71,9 @@ public class Store {
 
     @Column(name = "deleted_rs", length = 100)
     private String deletedReason;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
 }

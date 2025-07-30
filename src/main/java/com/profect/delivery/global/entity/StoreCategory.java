@@ -17,11 +17,9 @@ public class StoreCategory {
     @Column(name = "stores_category_id", nullable = false)
     private UUID storesCategoryId;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "stores_category", nullable = false)
-    private CategoryType storesCategory;
 
-    public enum CategoryType {
-        KOREAN, CHINESE, JAPANESE, WESTERN, SNACK, CAFE, ETC
-    }
+    @Column(name = "stores_category", nullable = false)
+    private String storesCategory;
+
+
 }

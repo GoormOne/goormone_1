@@ -7,6 +7,8 @@ import com.profect.delivery.domain.store.dto.request.RegionDto;
 import com.profect.delivery.domain.store.dto.request.StoreRegisterDto;
 import com.profect.delivery.domain.store.service.StoreService;
 import com.profect.delivery.global.DTO.ApiResponse;
+import com.profect.delivery.global.entity.Store;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,22 +22,25 @@ public class StoreController {
 
     //private final StoreService storeService;
 
-//    @PostMapping
-//    public ResponseEntity<ApiResponse<StoreRegisterDto>> registerStore(
-//            @RequestBody final StoreRegisterDto storeRegisterDto) {
-//
-//        boolean success = false;
-//        ApiResponse<StoreRegisterDto> response;
-//
-//        if (success) {
-//            response = ApiResponse.success(storeRegisterDto);
-//        } else {
-//            ErrorResponse error = new ErrorResponse();
-//            response = ApiResponse.failure(error);
-//        }
-//
-//        return new ResponseEntity<>(response, HttpStatus.OK);
-//    }
+    @PostMapping
+    public ResponseEntity<ApiResponse<StoreRegisterDto>> registerStore(
+            @RequestBody @Valid final StoreRegisterDto storeRegisterDto) {
+
+        Store savedStore  = storeService.saveStore(storeRegisterDto);
+
+        ApiResponse<StoreRegisterDto> response;
+
+        if (savedStore != null) {
+            response = ApiResponse.success(storeRegisterDto);
+        } else {
+            ErrorResponse error = new ErrorResponse();
+            error.setCode(HttpStatus.BAD_REQUEST.value());
+            error.setMessage("매장 정보 등록에 실패하였습니다.");
+            response = ApiResponse.failure(error);
+        }
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
 //    @DeleteMapping("/{storeId}")
 //    public ResponseEntity<ApiResponse<String>> deleteStore(

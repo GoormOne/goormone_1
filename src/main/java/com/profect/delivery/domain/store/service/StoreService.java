@@ -2,8 +2,12 @@ package com.profect.delivery.domain.store.service;
 
 import com.profect.delivery.domain.store.dto.request.StoreRegisterDto;
 import com.profect.delivery.domain.store.dto.response.StoreDto;
+import com.profect.delivery.domain.store.dto.response.StoreReponseDto;
+import com.profect.delivery.domain.store.repository.StoreCategoryRepository;
 import com.profect.delivery.domain.store.repository.StoreRepository;
 import com.profect.delivery.global.entity.Store;
+import com.profect.delivery.global.entity.StoreCategory;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +17,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class StoreService{
     private final StoreRepository storeRepository;
+    private final StoreCategoryRepository storeCategoryRepository;
 
     public void registerStore(final String storeId, final StoreRegisterDto storeRegisterDto) {
 
@@ -51,6 +56,31 @@ public class StoreService{
                 .build();
     }
 
+    public Store saveStore(@Valid StoreRegisterDto storeRegisterDto) {
+        System.out.println("category in DTO: " + storeRegisterDto.getCategory());
+        StoreCategory storeCategory = storeCategoryRepository.findByStoresCategory(storeRegisterDto.getCategory())
+                .orElseThrow(() -> new RuntimeException("Store category not found"));
+            String dummyUserId = "user002";
+            Store store = Store.builder()
+                    .storeId(UUID.randomUUID())
+                    .userId(dummyUserId)
+                    .isBanned(false)
+                    .createdBy(dummyUserId)
+                    .storeName(storeRegisterDto.getStoreName())
+                    .storeDescription(storeRegisterDto.getStoreDescription())
+                    .storesCategoryId(storeCategory.getStoresCategoryId())
+                    .address1(storeRegisterDto.getAddress1())
+                    .address2(storeRegisterDto.getAddress2())
+                    .zipCd(storeRegisterDto.getZipCd())
+                    .storePhone(storeRegisterDto.getStorePhone())
+                    .storeLatitude(storeRegisterDto.getStoreLatitude())
+                    .storeLongitude(storeRegisterDto.getStoreLongitude())
+                    .build();
+
+            return storeRepository.save(store);
+
+
+    }
 }
 
 //
