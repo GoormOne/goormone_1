@@ -31,7 +31,9 @@ public class StoreController {
         ApiResponse<StoreRegisterDto> response;
 
         if (savedStore != null) {
+            System.out.println("매장을 등록하였습니다" );
             response = ApiResponse.success(storeRegisterDto);
+
         } else {
             ErrorResponse error = new ErrorResponse();
             error.setCode(HttpStatus.BAD_REQUEST.value());
@@ -42,20 +44,23 @@ public class StoreController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-//    @DeleteMapping("/{storeId}")
-//    public ResponseEntity<ApiResponse<String>> deleteStore(
-//            @PathVariable String storeId ) {
-//        //storeService.deleteStore(storeId);
-//        boolean success = false;
-//        ApiResponse<String> response;
-//        if (success) {
-//            response = ApiResponse.success(storeId);
-//        } else {
-//            ErrorResponse error = new ErrorResponse();
-//            response = ApiResponse.failure(error);
-//        }
-//        return ResponseEntity.ok(response);
-//    }
+    @DeleteMapping("/{storeId}")
+    public ResponseEntity<ApiResponse<String>> deleteStore(
+            @PathVariable("storeId") String storeId ) {
+        //storeService.deleteStore(storeId);
+        boolean success = storeService.deleteStore(storeId);
+        ApiResponse<String> response;
+        if (success) {
+            System.out.println(storeId + "  매장을 삭제하였습니다" );
+            response = ApiResponse.success(storeId);
+        } else {
+            ErrorResponse error = new ErrorResponse();
+            error.setCode(HttpStatus.BAD_REQUEST.value());
+            error.setMessage("매장 삭제에 실패하였습니다.");
+            response = ApiResponse.failure(error);
+        }
+        return ResponseEntity.ok(response);
+    }
 
     @GetMapping("/{storeId}")
     public ResponseEntity<ApiResponse<StoreDto>> getStore(

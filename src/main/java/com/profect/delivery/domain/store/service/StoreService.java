@@ -7,10 +7,12 @@ import com.profect.delivery.domain.store.repository.StoreCategoryRepository;
 import com.profect.delivery.domain.store.repository.StoreRepository;
 import com.profect.delivery.global.entity.Store;
 import com.profect.delivery.global.entity.StoreCategory;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -19,19 +21,18 @@ public class StoreService{
     private final StoreRepository storeRepository;
     private final StoreCategoryRepository storeCategoryRepository;
 
-    public void registerStore(final String storeId, final StoreRegisterDto storeRegisterDto) {
 
-    }
-    public void deleteStore(final String storeId) {
 
-    }
+    //public void deleteStore(final String storeId) {}
+
+
 //    public StoreListDto getStore(final String storeId) {
 //        //return storeRepository.findById(storeId);
 //    }
 
-    public void getStoreRegions (final String storeId) {    }
-    public void registerStoreRegion(final String storeId, final String regionId) {}
-    public void deleteStoreRegion(final String storeId, final String regionId) {}
+//    public void getStoreRegions (final String storeId) {    }
+//    public void registerStoreRegion(final String storeId, final String regionId) {}
+//    public void deleteStoreRegion(final String storeId, final String regionId) {}
 
     public StoreDto findStoreById(String storeId) {
         UUID storeuuid = UUID.fromString(storeId);
@@ -80,6 +81,15 @@ public class StoreService{
             return storeRepository.save(store);
 
 
+    }
+    @Transactional
+    public boolean deleteStore(String storeId) {
+        Optional<Store> store = storeRepository.findByStoreId(UUID.fromString(storeId));
+        if (store.isPresent()) {
+            storeRepository.delete(store.get());
+            return true;
+        }
+        return false;
     }
 }
 
