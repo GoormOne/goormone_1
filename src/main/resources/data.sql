@@ -15,7 +15,10 @@ VALUES
 INSERT INTO p_regions (region_id, region_1depth_name, region_2depth_name, region_3depth_name, created_at)
 VALUES
     (gen_random_uuid(), '서울특별시', '강남구', '역삼동', now()),
-    (gen_random_uuid(), '서울특별시', '서초구', '반포동', now());
+    (gen_random_uuid(), '서울특별시', '서초구', '반포동', now()),
+    (gen_random_uuid(), '서울특별시', '서대문구', '대현동', now()),
+    (gen_random_uuid(), '서울특별시', '서대문구', '신촌동', now()),
+    (gen_random_uuid(), '서울특별시', '서대문구', '아현동', now());;
 
 -- INSERT INTO p_stores_category
 INSERT INTO p_stores_category (stores_category_id, stores_category)

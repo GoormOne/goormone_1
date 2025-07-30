@@ -1,6 +1,8 @@
 package com.profect.delivery.domain.store.controller;
 
 
+import com.profect.delivery.domain.store.dto.request.RegionAddressDto;
+import com.profect.delivery.domain.store.dto.request.RegionListAddressDto;
 import com.profect.delivery.domain.store.dto.response.RegionDto;
 import com.profect.delivery.domain.store.dto.response.RegionListDto;
 import com.profect.delivery.domain.store.dto.response.StoreDto;
@@ -16,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @RestController
@@ -100,14 +103,27 @@ public class StoreController {
         }
     }
 
-//
-//    @PostMapping("/{storeId}/regions")
-//    public ResponseEntity<ResponseDto<Void>> registerStoreRegion(
-//            @PathVariable String storeId ,
-//            @RequestBody final RegionDto regionId ) {
-//        //storeService.registerRegions(storeId, regionId.regionIds());
-//        return ResponseEntity.ok().body(ResponseDto.success());
-//    }
+
+    @PostMapping("/{storeId}/regions")
+    public ResponseEntity<ApiResponse<List<UUID>>> registerStoreRegions(
+            @PathVariable String storeId,
+            @RequestBody final RegionListAddressDto regionListAddressDto) {
+        try {
+            System.out.println("Request Dto: " + regionListAddressDto);
+            System.out.println("Regions: " + regionListAddressDto.getRegionListAddressDto());
+
+            List<UUID> registerRegionIds = storeService.registerRegions(storeId, regionListAddressDto);
+            ApiResponse<List<UUID>> response = ApiResponse.success(registerRegionIds);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            ErrorResponse error = new ErrorResponse();
+            error.setCode(HttpStatus.NOT_FOUND.value());
+            error.setMessage(e.getMessage());
+            ApiResponse<List<UUID>> response = ApiResponse.failure(error);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+    }
+    }
 //
 //    @DeleteMapping("/{storeId}/regions")
 //    public ResponseEntity<ResponseDto<Void>> deleteStoreRegion(
@@ -124,7 +140,7 @@ public class StoreController {
 //    {
 //        return ResponseEntity.ok().body(ResponseDto.success());
 //    }
-}
+
 //    public class UserController {
 //        private final UserService userService;
 //

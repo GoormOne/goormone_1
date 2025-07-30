@@ -1,12 +1,16 @@
 package com.profect.delivery.domain.store.service;
 
+import com.profect.delivery.domain.store.dto.request.RegionAddressDto;
+import com.profect.delivery.domain.store.dto.request.RegionListAddressDto;
 import com.profect.delivery.domain.store.dto.request.StoreRegisterDto;
 import com.profect.delivery.domain.store.dto.response.RegionDto;
 import com.profect.delivery.domain.store.dto.response.RegionListDto;
 import com.profect.delivery.domain.store.dto.response.StoreDto;
 import com.profect.delivery.domain.store.dto.response.StoreReponseDto;
+import com.profect.delivery.domain.store.repository.RegionRepository;
 import com.profect.delivery.domain.store.repository.StoreCategoryRepository;
 import com.profect.delivery.domain.store.repository.StoreRepository;
+import com.profect.delivery.global.entity.Region;
 import com.profect.delivery.global.entity.Store;
 import com.profect.delivery.global.entity.StoreCategory;
 import jakarta.transaction.Transactional;
@@ -16,6 +20,7 @@ import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -26,7 +31,7 @@ import java.util.stream.Collectors;
 public class StoreService {
     private final StoreRepository storeRepository;
     private final StoreCategoryRepository storeCategoryRepository;
-
+    private final RegionRepository regionRepository;
 
     //public void deleteStore(final String storeId) {}
 
@@ -82,6 +87,7 @@ public class StoreService {
                 .storeLatitude(storeRegisterDto.getStoreLatitude())
                 .storeLongitude(storeRegisterDto.getStoreLongitude())
                 .build();
+        //하나의 리스트로 저장하는 방법을 생각해볼것
 
         return storeRepository.save(store);
 
@@ -97,7 +103,7 @@ public class StoreService {
             return false;
         }
         Store store = storeOptional.get();
-        //soft delete방법 사용
+
         store.setDeletedAt(LocalDateTime.now());
         store.setDeletedBy(store.getUserId());
         store.setDeletedReason("사용자 요청으로 인한 삭제");
@@ -120,6 +126,40 @@ public class StoreService {
 
         return new RegionListDto(regionDtos);
     }
+
+
+    @Transactional
+    public List<UUID> registerRegions(String storeId, RegionListAddressDto regionListAddressDto) {
+        Store store = storeRepository.findByStoreId(UUID.fromString(storeId))
+                .orElseThrow(() -> new RuntimeException("store not found"));
+
+        List<UUID> regionIds = new ArrayList<>();
+
+        for (RegionAddressDto dto : regionListAddressDto.getRegionListAddressDto()) {
+            UUID regionId = storeRepository.findRegionIdByFullAddress(
+                    dto.getAddress1(), dto.getAddress2(), dto.getAddress3()
+            );
+
+            if (regionId == null) {
+                throw new RuntimeException("Region ID를 찾을 수 없습니다: " + dto.getAddress1() + " " + dto.getAddress2() + " " + dto.getAddress3());
+            }
+
+            Region region = regionRepository.findById(regionId)
+                    .orElseThrow(() -> new RuntimeException("Region 엔티티를 찾을 수 없습니다: " + regionId));
+
+            // 이미 있는 region이 아니면 추가
+            if (!store.getRegions().contains(region)) {
+                store.getRegions().add(region);
+            }
+
+            regionIds.add(regionId);
+        }
+
+        // 저장
+        storeRepository.save(store);
+
+        return regionIds;
+    }
 }
 
 
@@ -128,6 +168,6 @@ public class StoreService {
 //        return storeRepository.findById(storeid);
 //    }
 //
-//    public List<Store> getAllStores() {
-//        return storeRepository.findAll();
-//    }
+//    public urn storeRepository.findAll();
+//    }List<Store> getAllStores() {
+////        ret
