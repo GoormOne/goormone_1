@@ -1,30 +1,26 @@
-DO $$ BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'role_type') THEN
-CREATE TYPE role_type AS ENUM ('CUSTOMER', 'OWNER', 'MANAGER', 'MASTER');
-END IF;
-END;
-$$;
+CREATE TYPE "role_type" AS ENUM (
+  'CUSTOMER',
+  'OWNER',
+  'MANAGER',
+  'MASTER'
+);
 
-DO $$ BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'cart_status') THEN
-CREATE TYPE cart_status AS ENUM ('ACTIVE', 'ORDERED', 'ABANDONED');
-END IF;
-END;
-$$;
+CREATE TYPE "cart_status" AS ENUM (
+  'ACTIVE',
+  'ORDERED',
+  'ABANDONED'
+);
 
-DO $$ BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'payment_method') THEN
-CREATE TYPE payment_method AS ENUM ('CARD');
-END IF;
-END;
-$$;
+CREATE TYPE "payment_method" AS ENUM (
+  'CARD'
+);
 
-DO $$ BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'payment_result') THEN
-CREATE TYPE payment_result AS ENUM ('PENDING', 'SUCCESS', 'CANCELED', 'FAILED');
-END IF;
-END;
-$$;
+CREATE TYPE "payment_result" AS ENUM (
+  'PENDING',
+  'SUCCESS',
+  'CANCELED',
+  'FAILED'
+);
 
 CREATE TABLE "p_users" (
   "user_id" varchar(10) NOT NULL PRIMARY KEY,
@@ -219,6 +215,13 @@ CREATE TABLE "p_review_summary" (
   "created_by" varchar(10) NOT NULL
 );
 
+CREATE TABLE "p_review_average" (
+  "store_id" UUID NOT NULL PRIMARY KEY,
+  "count" INT NOT NULL,
+  "total" INT NOT NULL,
+  CONSTRAINT fk_review_average_store FOREIGN KEY ("store_id") REFERENCES "p_stores" ("store_id")
+);
+
 CREATE TABLE "p_payments" (
   "payment_id" uuid NOT NULL PRIMARY KEY,
   "user_id" varchar(10) NOT NULL,
@@ -289,6 +292,8 @@ ALTER TABLE "p_order_items" ADD FOREIGN KEY ("menu_id") REFERENCES "p_menus" ("m
 ALTER TABLE "p_reviews" ADD FOREIGN KEY ("store_id") REFERENCES "p_stores" ("store_id");
 
 ALTER TABLE "p_reviews" ADD FOREIGN KEY ("user_id") REFERENCES "p_users" ("user_id");
+
+ALTER TABLE "p_reviews" ADD COLUMN "store_name" VARCHAR(30) Not NULL;
 
 ALTER TABLE "p_review_summary" ADD FOREIGN KEY ("store_id") REFERENCES "p_stores" ("store_id");
 
