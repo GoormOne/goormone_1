@@ -59,19 +59,19 @@ public class ReviewService {
                 .build();
     }
 
-//    @Transactional(readOnly = true)
-//    public ReviewDto getReviewByStoreIdAndReviewId(UUID storeId, UUID reviewId) {
-//        Review review = reviewRepository.findByStoreIdAndReviewId(storeId, reviewId)
-//                .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
-//
-//        return ReviewDto.builder()
-//                .reviewId(review.getReviewId())
-//                .userId(review.getUserId())
-//                .createdAt(review.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
-//                .rating(review.getRating())
-//                .comment(review.getComment())
-//                .build();
-//    }
+    @Transactional(readOnly = true)
+    public ReviewDto getReviewByStoreIdAndReviewId(UUID storeId, UUID reviewId) {
+        Review review = reviewRepository.findByStoreIdAndReviewId(storeId, reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
+
+        return ReviewDto.builder()
+                .reviewId(review.getReviewId())
+                .userId(review.getUserId())
+                .createdAt(review.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                .rating(review.getRating())
+                .comment(review.getComment())
+                .build();
+    }
 
 
     public void createReview(UUID storeId, ReviewRequestDto dto) {
@@ -115,22 +115,22 @@ public class ReviewService {
     }
 
 
-    public void updateReview(UUID storeId, UUID reviewId, ReviewRequestDto dto) {
-        Review review = reviewRepository.findByStoreIdAndReviewId(storeId, reviewId)
-                .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
-
-        review.setRating(dto.getRating());
-        review.setComment(dto.getComment());
-        review.setUpdatedAt(LocalDateTime.now());
-        review.setUpdatedBy(dto.getUserId());
-
-        // ✅ 권한 있는 사용자만 공개 여부 변경 허용
-        if (isAuthorizedToChangeVisibility(dto.getUserId())) {
-            review.setIsPublic(dto.getIsPublic() != null ? dto.getIsPublic() : true);
-        }
-
-        // save 호출 안 해도 됨: JPA가 @Transactional 안에서 변경 감지(dirty checking)
-    }
+//    public void updateReview(UUID storeId, UUID reviewId, ReviewRequestDto dto) {
+//        Review review = reviewRepository.findByStoreIdAndReviewId(storeId, reviewId)
+//                .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
+//
+//        review.setRating(dto.getRating());
+//        review.setComment(dto.getComment());
+//        review.setUpdatedAt(LocalDateTime.now());
+//        review.setUpdatedBy(dto.getUserId());
+//
+//        // ✅ 권한 있는 사용자만 공개 여부 변경 허용
+//        if (isAuthorizedToChangeVisibility(dto.getUserId())) {
+//            review.setIsPublic(dto.getIsPublic() != null ? dto.getIsPublic() : true);
+//        }
+//
+//        // save 호출 안 해도 됨: JPA가 @Transactional 안에서 변경 감지(dirty checking)
+//    }
 
     private boolean isAuthorizedToChangeVisibility(String userId) {
         // 예: 관리자 또는 특정 접두어 가진 사용자만 가능

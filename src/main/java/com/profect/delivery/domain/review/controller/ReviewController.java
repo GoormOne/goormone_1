@@ -46,13 +46,14 @@ public class ReviewController {
 
     // 리뷰 생성
     @PostMapping("/{storeId}")
-    public ResponseEntity<ApiResponse<String>> createReview(
+    public ResponseEntity<ApiResponse<ReviewDto>> createReview(
             @PathVariable UUID storeId,
             @RequestBody ReviewRequestDto request
     ) {
-        reviewService.createReview(storeId, request);
-        return ResponseEntity.ok(ApiResponse.success("리뷰가 성공적으로 등록되었습니다."));
+        ReviewDto reviewDto = reviewService.createReview(storeId, request);
+        return ResponseEntity.ok(ApiResponse.success(reviewDto));
     }
+
 
     // 리뷰 삭제
     @DeleteMapping("/{storeId}")
