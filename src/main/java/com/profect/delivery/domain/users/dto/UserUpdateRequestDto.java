@@ -1,21 +1,19 @@
 package com.profect.delivery.domain.users.dto;
 
+import com.profect.delivery.global.entity.Role;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.Date;
 
 @Data
 @NoArgsConstructor
-public class UserPatchReuestDto {
+public class UserPatchRequestDto {//네이밍 규칙 바꾸기 알아보게
 
-    private String username;
-    private String password;
     private String name;
-    private Date brith;
+    private String password;
     private String email;
 
+    private Boolean is_public;
 
 }
