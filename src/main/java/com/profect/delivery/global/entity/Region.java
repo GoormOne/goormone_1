@@ -40,6 +40,6 @@ public class Region {
     private LocalDateTime deletedAt;
 
 
-    @ManyToMany(mappedBy = "regions")
-    private List<Store> stores = new ArrayList<>();
+    @OneToMany(mappedBy = "region", cascade = CascadeType.ALL)
+    private List<StoreRegion> storeRegions = new ArrayList<>();
 }

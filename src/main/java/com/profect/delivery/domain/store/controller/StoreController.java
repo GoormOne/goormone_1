@@ -24,6 +24,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/stores")
 public class StoreController {
+
     private final StoreService storeService;
 
     //private final StoreService storeService;
@@ -32,12 +33,12 @@ public class StoreController {
     public ResponseEntity<ApiResponse<StoreRegisterDto>> registerStore(
             @RequestBody @Valid final StoreRegisterDto storeRegisterDto) {
 
-        Store savedStore  = storeService.saveStore(storeRegisterDto);
+        Store savedStore = storeService.saveStore(storeRegisterDto);
 
         ApiResponse<StoreRegisterDto> response;
 
         if (savedStore != null) {
-            System.out.println("매장을 등록하였습니다" );
+            System.out.println("매장을 등록하였습니다");
             response = ApiResponse.success(storeRegisterDto);
 
         } else {
@@ -52,12 +53,12 @@ public class StoreController {
 
     @DeleteMapping("/{storeId}")
     public ResponseEntity<ApiResponse<String>> deleteStore(
-            @PathVariable("storeId") String storeId ) {
+            @PathVariable("storeId") String storeId) {
         //storeService.deleteStore(storeId);
         boolean success = storeService.deleteStore(storeId);
         ApiResponse<String> response;
         if (success) {
-            System.out.println(storeId + "  매장을 삭제하였습니다" );
+            System.out.println(storeId + "  매장을 삭제하였습니다");
             response = ApiResponse.success(storeId);
         } else {
             ErrorResponse error = new ErrorResponse();
@@ -71,13 +72,13 @@ public class StoreController {
     @GetMapping("/{storeId}")
     public ResponseEntity<ApiResponse<StoreDto>> getStore(
             @PathVariable String storeId
-    ){
+    ) {
         StoreDto storeDto = storeService.findStoreById(storeId);
-        ApiResponse<StoreDto> response ;
+        ApiResponse<StoreDto> response;
 
-        if(storeId != null){
+        if (storeId != null) {
             response = ApiResponse.success(storeDto);
-        }else {
+        } else {
             ErrorResponse error = new ErrorResponse();
             error.setCode(HttpStatus.BAD_REQUEST.value());
             error.setMessage("해당 매장 정보가 없습니다.");
@@ -86,6 +87,7 @@ public class StoreController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
     @GetMapping("/{storeId}/regions")
     public ResponseEntity<ApiResponse<RegionListDto>> getStoreRegions(
             @PathVariable String storeId
@@ -123,15 +125,30 @@ public class StoreController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
     }
+
+
+    @DeleteMapping("/{storeId}/regions")
+    public ResponseEntity<ApiResponse<List<UUID>>> deleteStoreRegions(
+            @PathVariable String storeId,
+            @RequestBody final RegionListAddressDto regionListAddressDto
+
+    ) {
+        try {
+            List<UUID> deleteRegionIds = storeService.deleteRegion(storeId, regionListAddressDto);
+            ApiResponse<List<UUID>> response = ApiResponse.success(deleteRegionIds);
+            return ResponseEntity.ok(response);
+
+        } catch (RuntimeException e) {
+            ErrorResponse error = new ErrorResponse();
+            error.setCode(HttpStatus.NOT_FOUND.value());
+            error.setMessage(e.getMessage());
+            ApiResponse<List<UUID>> response = ApiResponse.failure(error);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+
     }
-//
-//    @DeleteMapping("/{storeId}/regions")
-//    public ResponseEntity<ResponseDto<Void>> deleteStoreRegion(
-//            @PathVariable String storeId ,
-//            @RequestBody final RegionDto regionId
-//    ){
-//        return ResponseEntity.ok().body(ResponseDto.success());
-//    }
+}
+
 //
 //    @GetMapping("/search/categoryName")
 //    public ResponseEntity<ResponseDto<Object>> searchStore(

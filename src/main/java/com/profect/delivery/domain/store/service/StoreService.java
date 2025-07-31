@@ -6,13 +6,12 @@ import com.profect.delivery.domain.store.dto.request.StoreRegisterDto;
 import com.profect.delivery.domain.store.dto.response.RegionDto;
 import com.profect.delivery.domain.store.dto.response.RegionListDto;
 import com.profect.delivery.domain.store.dto.response.StoreDto;
-import com.profect.delivery.domain.store.dto.response.StoreReponseDto;
+
 import com.profect.delivery.domain.store.repository.RegionRepository;
 import com.profect.delivery.domain.store.repository.StoreCategoryRepository;
+import com.profect.delivery.domain.store.repository.StoreRegionRepository;
 import com.profect.delivery.domain.store.repository.StoreRepository;
-import com.profect.delivery.global.entity.Region;
-import com.profect.delivery.global.entity.Store;
-import com.profect.delivery.global.entity.StoreCategory;
+import com.profect.delivery.global.entity.*;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +31,8 @@ public class StoreService {
     private final StoreRepository storeRepository;
     private final StoreCategoryRepository storeCategoryRepository;
     private final RegionRepository regionRepository;
+
+    private final StoreRegionRepository storeRegionRepository;
 
     //public void deleteStore(final String storeId) {}
 
@@ -87,7 +88,8 @@ public class StoreService {
                 .storeLatitude(storeRegisterDto.getStoreLatitude())
                 .storeLongitude(storeRegisterDto.getStoreLongitude())
                 .build();
-        //하나의 리스트로 저장하는 방법을 생각해볼것
+
+        //@피드백 하나의 리스트로 저장하는 방법을 생각해볼것
 
         return storeRepository.save(store);
 
@@ -127,7 +129,6 @@ public class StoreService {
         return new RegionListDto(regionDtos);
     }
 
-
     @Transactional
     public List<UUID> registerRegions(String storeId, RegionListAddressDto regionListAddressDto) {
         Store store = storeRepository.findByStoreId(UUID.fromString(storeId))
@@ -147,18 +148,55 @@ public class StoreService {
             Region region = regionRepository.findById(regionId)
                     .orElseThrow(() -> new RuntimeException("Region 엔티티를 찾을 수 없습니다: " + regionId));
 
-            // 이미 있는 region이 아니면 추가
-            if (!store.getRegions().contains(region)) {
-                store.getRegions().add(region);
-            }
+            // 이미 등록된 StoreRegion인지 확인 (soft delete 제외)
+            boolean exists = store.getStoreRegions().stream()
+                    .anyMatch(sr -> sr.getRegion().equals(region) && sr.getDeletedAt() == null);
 
+            if (!exists) {
+                StoreRegion storeRegion = new StoreRegion(store, region);
+                store.getStoreRegions().add(storeRegion);
+            }
             regionIds.add(regionId);
         }
 
-        // 저장
-        storeRepository.save(store);
-
         return regionIds;
+    }
+    @Transactional
+    public List<UUID> deleteRegion(String storeId, RegionListAddressDto regionListAddressDto) {
+        Store store = storeRepository.findByStoreId(UUID.fromString(storeId))
+                .orElseThrow(() -> new RuntimeException("Store not found"));
+
+        List<UUID> deletedRegionIds = new ArrayList<>();
+
+        for (RegionAddressDto dto : regionListAddressDto.getRegionListAddressDto()) {
+
+            UUID regionId = storeRepository.findRegionIdByFullAddress(
+                    dto.getAddress1(), dto.getAddress2(), dto.getAddress3()
+            );
+
+            if (regionId == null) {
+                throw new RuntimeException("Region ID를 찾을 수 없습니다: "
+                        + dto.getAddress1() + " " + dto.getAddress2() + " " + dto.getAddress3());
+            }
+
+            Region region = regionRepository.findById(regionId)
+                    .orElseThrow(() -> new RuntimeException("Region 엔티티를 찾을 수 없습니다."));
+
+
+            StoreRegionId storeRegionId = new StoreRegionId(store.getStoreId(), region.getRegionId());
+
+
+            StoreRegion storeRegion = storeRegionRepository.findById(storeRegionId)
+                    .orElseThrow(() -> new RuntimeException("StoreRegion 관계가 없습니다."));
+
+
+            if (storeRegion.getDeletedAt() == null) {
+                storeRegion.softDelete();
+                deletedRegionIds.add(regionId);
+            }
+        }
+
+        return deletedRegionIds;
     }
 }
 
