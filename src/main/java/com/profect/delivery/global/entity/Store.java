@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "p_stores")
@@ -59,13 +60,8 @@ public class Store {
     private LocalDateTime createdAt;
 
 
-    @ManyToMany
-    @JoinTable(
-            name = "p_stores_regions",
-            joinColumns = @JoinColumn(name = "store_id"),
-            inverseJoinColumns = @JoinColumn(name = "region_id")
-    )
-    private List<Region> regions = new ArrayList<>();
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<StoreRegion> storeRegions = new ArrayList<>();
 
     @CreatedBy
     @Column(name = "created_by", length = 10, nullable = false)
@@ -86,5 +82,12 @@ public class Store {
     @Column(name = "deleted_rs", length = 100)
     private String deletedReason;
 
+
+    public List<Region> getRegions() {
+        return storeRegions.stream()
+                .filter(sr -> sr.getDeletedAt() == null) // soft delete 제외
+                .map(StoreRegion::getRegion)
+                .collect(Collectors.toList());
+    }
 
 }

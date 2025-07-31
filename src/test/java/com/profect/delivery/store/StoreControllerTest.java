@@ -39,5 +39,10 @@
 //        assertEquals("부산국밥집", foundStore.getStoreName());
 //        assertEquals("국밥 맛집입니다.", foundStore.getStoreDescription());
 //        assertEquals("010-1111-1111", foundStore.getStorePhone());
+//
+//
+//
+//        단위 테스트 > 통합 테스트
+//
 //    }
 //}
