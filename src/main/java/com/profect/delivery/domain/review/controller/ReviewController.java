@@ -8,8 +8,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
+import com.profect.delivery.global.DTO.ErrorResponse;
 import java.util.UUID;
+import java.time.LocalDateTime;
+
 
 // @Validated: 값 유효성 검증 후에 global dto에서 not null 같은 조건 체크
 @RestController
@@ -33,13 +35,28 @@ public class ReviewController {
     ) {
         reviewService.createReview(storeId, request);
         return ResponseEntity.ok(ApiResponse.success("리뷰가 성공적으로 등록되었습니다."));
-
-
-//    @DeleteMapping
-//    public ResponseEntity<ApiResponse<String>> deleteReview()
-
-
     }
+
+    @DeleteMapping("/{storeId}")
+    public ResponseEntity<ApiResponse<String>> deleteReview(
+            @PathVariable UUID storeId,
+            @RequestParam("review_id") UUID reviewId
+    ) {
+        try {
+            reviewService.deleteReview(storeId, reviewId);
+            return ResponseEntity.ok(ApiResponse.success("리뷰가 삭제되었습니다."));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(ApiResponse.failure(new ErrorResponse(
+                            400,
+                            e.getMessage(),
+                            "/reviews/" + storeId,
+                            LocalDateTime.now().toString()
+                    )));
+        }
+    }
+
 
 }
 

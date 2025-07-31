@@ -9,7 +9,7 @@ import com.profect.delivery.global.entity.Review;
 import com.profect.delivery.global.entity.ReviewAverage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
@@ -88,4 +89,14 @@ public class ReviewService {
                 }
         );
     }
+
+
+    public void deleteReview(UUID storeId, UUID reviewId) {
+        boolean exists = reviewRepository.existsByStoreIdAndReviewId(storeId, reviewId);
+        if (!exists) {
+            throw new IllegalArgumentException("리뷰를 찾을 수 없습니다.");
+        }
+        reviewRepository.deleteByStoreIdAndReviewId(storeId, reviewId);
+    }
+
 }
