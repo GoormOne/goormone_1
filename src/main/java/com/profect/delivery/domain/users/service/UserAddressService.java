@@ -1,5 +1,6 @@
 package com.profect.delivery.domain.users.service;
 
+import com.profect.delivery.domain.users.dto.UserAddressesRequestDto;
 import com.profect.delivery.domain.users.repository.UserAdressRepository;
 import com.profect.delivery.global.entity.UserAddress;
 import lombok.RequiredArgsConstructor;
@@ -14,16 +15,19 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class UserAddressService {
-    @Autowired
-    UserAdressRepository userAdressRepository;
 
-    public UserAddressService(UserAdressRepository userAdressRepository){
-        this.userAdressRepository = userAdressRepository;
-    }
+    private final UserAdressRepository userAdressRepository;
+
+
 
     @Transactional(readOnly = true)
     public List<UserAddress> findByUserId(String userId) {
         return userAdressRepository.findByUserId(userId);
+    }
+
+    public void CreateUserAddress(UserAddressesRequestDto userAddressDto,String UserId) {
+        UserAddress userAddress = userAddressDto.toEntity(UserId);
+        userAdressRepository.save(userAddress);
     }
 
 

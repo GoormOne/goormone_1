@@ -1,4 +1,7 @@
 package com.profect.delivery.global.advice;
 
-public class InvalidInputException {
+class InvalidInputException extends RuntimeException {
+    public InvalidInputException(String message) {
+        super(message);
+    }
 }

@@ -5,6 +5,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -19,10 +24,19 @@ public class UserAddressesRequestDto {
     private BigDecimal user_longitude;
     private boolean is_default;
 
-//    public UserAddress toEntity(){
-//        return UserAddress.builder()
-//                .addressName(address_name)
-//                .
-//    }
+    public UserAddress toEntity(String userid){
+        return UserAddress.builder()
+                .addressCd(UUID.randomUUID())
+                .userId(userid)
+                .addressName(address_name)
+                .address1(address1)
+                .address2(address2)
+                .zipCd(zip_cd)
+                .userLatitude(user_latitude)
+                .userLongitude(user_longitude)
+                .isDefault(is_default)
+                .createdAt(Timestamp.valueOf(LocalDateTime.now()))
+                .build();
+    }
 
 }
