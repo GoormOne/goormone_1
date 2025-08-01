@@ -61,6 +61,8 @@ public class StoreService {
                         .store_latitude(String.valueOf(store.getStoreLatitude()))
                         .store_longtitude(String.valueOf(store.getStoreLongitude()))
                         .build())
+                .openTime(store.getOpenTime())
+                .closeTime(store.getCloseTime())
                 .build();
     }
 
@@ -73,6 +75,7 @@ public class StoreService {
                 .storeId(UUID.randomUUID())
                 .userId(dummyUserId)
                 .isBanned(false)
+                .createdAt(LocalDateTime.now())
                 .createdBy(dummyUserId)
                 .storeName(storeRegisterDto.getStoreName())
                 .storeDescription(storeRegisterDto.getStoreDescription())
@@ -83,6 +86,8 @@ public class StoreService {
                 .storePhone(storeRegisterDto.getStorePhone())
                 .storeLatitude(storeRegisterDto.getStoreLatitude())
                 .storeLongitude(storeRegisterDto.getStoreLongitude())
+                .openTime(storeRegisterDto.getOpenTime())
+                .closeTime(storeRegisterDto.getCloseTime())
                 .build();
 
         //@피드백 하나의 리스트로 저장하는 방법을 생각해볼것
