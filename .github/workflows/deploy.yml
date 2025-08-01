@@ -7,8 +7,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 17
@@ -17,25 +15,34 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v4
-
       - name: Build with Gradle
         run: ./gradlew build --exclude-task test
 
+      - name: Upload JAR file
+        uses: actions/upload-artifact@v3
+        with:
+          name: springboot-jar
+          path: build/libs/*.jar
+
   deploy:
     name: Deploy to EC2
-    needs: build  # build job이 성공해야 실행됨
+    needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - name: Download JAR file from build
+        uses: actions/download-artifact@v3
+        with:
+          name: springboot-jar
+          path: .
 
-      - name: Copy JAR to EC2
+      - name: Prepare SSH Key
         run: |
           echo "$EC2_SSH_KEY" > private_key.pem
           chmod 600 private_key.pem
-          scp -o StrictHostKeyChecking=no -i private_key.pem build/libs/*.jar $EC2_USER@$EC2_HOST:$DEPLOY_PATH/app.jar
+
+      - name: Copy JAR to EC2
+        run: |
+          scp -o StrictHostKeyChecking=no -i private_key.pem *.jar $EC2_USER@$EC2_HOST:$DEPLOY_PATH/app.jar
 
       - name: Run JAR on EC2
         run: |
