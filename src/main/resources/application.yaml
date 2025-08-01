@@ -3,8 +3,7 @@ spring:
     name: sample-project
 
   datasource:
-#    url: jdbc:postgresql://localhost:5432/sample
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://localhost:5432/sample
     driver-class-name: org.postgresql.Driver
     username: user
     password: password

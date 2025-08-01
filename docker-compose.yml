@@ -5,8 +5,7 @@ services:
     ports:
       - 5432:5432
     environment:
-#      - POSTGRES_DB=sample
-      - POSTGRES_DB=postgres
+      - POSTGRES_DB=sample
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
     volumes:
