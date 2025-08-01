@@ -1,6 +1,6 @@
-package com.profect.delivery.menu.repository;
+package com.profect.delivery.domain.menu.repository;
 
-import com.profect.delivery.menu.entity.Menu;
+import com.profect.delivery.domain.menu.entity.Menu;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

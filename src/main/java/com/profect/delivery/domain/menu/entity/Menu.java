@@ -1,4 +1,4 @@
-package com.profect.delivery.menu.entity;
+package com.profect.delivery.domain.menu.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
