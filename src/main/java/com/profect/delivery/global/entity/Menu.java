@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+
 @Entity
 @Table(name = "p_menus")
 @IdClass(MenuId.class)
@@ -13,7 +14,6 @@ import java.util.UUID;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
-@Setter
 public class Menu {
     @Id @GeneratedValue
     @Column(name = "menu_id", nullable = false)
@@ -37,6 +37,7 @@ public class Menu {
     @Column(name = "menu_description", columnDefinition = "TEXT", nullable = false)
     private String menuDescription;
 
+    @JsonProperty("isPublic")
     @Column(name = "is_public", nullable = false)
     private boolean isPublic;
 

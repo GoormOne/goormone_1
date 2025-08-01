@@ -84,7 +84,7 @@ CREATE TABLE "p_stores" (
     store_latitude      DECIMAL(10,6) NOT NULL,
     store_longitude     DECIMAL(10,6) NOT NULL,
     open_time           TIME NOT NULL,
-    close_time           TIME NOT NULL,
+    close_time          TIME NOT NULL,
     is_banned           BOOLEAN NOT NULL,
     created_at          TIMESTAMP NOT NULL,
     created_by          VARCHAR(10) NOT NULL,

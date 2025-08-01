@@ -1,4 +1,3 @@
-
 -- INSERT INTO p_users
 INSERT INTO p_users (user_id, username, password, name, birth, email, role, is_public, is_banned, created_at, created_by)
 VALUES 
