@@ -63,10 +63,14 @@ public class Store {
 
     @Column(name = "is_banned", nullable = false)
     private Boolean isBanned = false;
-    @Column(name = "created_at", nullable = false)
+
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StoreRegion> storeRegions = new ArrayList<>();
 
