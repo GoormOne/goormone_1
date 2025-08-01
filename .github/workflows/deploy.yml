@@ -47,3 +47,46 @@ jobs:
     # - name: Build with Gradle 8.9
     #   run: gradle build
 
+name: Java CI + CD
+
+on:
+  push:
+    branches: [ "release" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Build with Gradle
+        run: ./gradlew build --exclude-task test
+
+  deploy:
+    name: Deploy to EC2
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Copy JAR to EC2
+        run: |
+          echo "$EC2_SSH_KEY" > private_key.pem
+          chmod 600 private_key.pem
+          scp -o StrictHostKeyChecking=no -i private_key.pem build/libs/*.jar $EC2_USER@$EC2_HOST:$DEPLOY_PATH/app.jar
+
+      - name: Run JAR on EC2
+        run: |
+          ssh -o StrictHostKeyChecking=no -i private_key.pem $EC2_USER@$EC2_HOST << EOF
+            pkill -f 'java -jar' || true
+            nohup java -jar $DEPLOY_PATH/app.jar > app.log 2>&1 &
+          EOF
