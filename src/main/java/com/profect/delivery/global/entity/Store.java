@@ -2,14 +2,9 @@ package com.profect.delivery.global.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedBy;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "p_stores")
@@ -30,12 +25,6 @@ public class Store {
     @Column(name = "stores_category_id", columnDefinition = "uuid")
     private UUID storesCategoryId;
 
-    @Column(name = "store_name", length = 10)
-    private  String storeName;
-
-    @Column(name = "store_description", columnDefinition = "TEXT", nullable = false)
-    private String storeDescription;
-
     @Column(name = "address1", length = 50)
     private String address1;
 
@@ -54,17 +43,13 @@ public class Store {
     @Column(name = "store_longitude", precision = 10, scale = 6)
     private BigDecimal storeLongitude;
 
-    @Column(name = "is_banned", nullable = false)
-    private Boolean isBanned = false;
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "is_banned")
+    private Boolean isBanned;
+
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-
-    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<StoreRegion> storeRegions = new ArrayList<>();
-
-    @CreatedBy
-    @Column(name = "created_by", length = 10, nullable = false)
+    @Column(name = "created_by", length = 10)
     private String createdBy;
 
     @Column(name = "updated_at")
@@ -81,13 +66,4 @@ public class Store {
 
     @Column(name = "deleted_rs", length = 100)
     private String deletedReason;
-
-
-    public List<Region> getRegions() {
-        return storeRegions.stream()
-                .filter(sr -> sr.getDeletedAt() == null) // soft delete 제외
-                .map(StoreRegion::getRegion)
-                .collect(Collectors.toList());
-    }
-
 }

@@ -1,6 +1,6 @@
 spring:
   application:
-    name: sample-project
+    name: goormone_1  # 원래) sample-project
 
   datasource:
     url: jdbc:postgresql://localhost:5432/sample
@@ -9,8 +9,9 @@ spring:
     password: password
 
   jpa:
+    #    hibernate.ddl-auto:  create
     hibernate:
-      ddl-auto: none  # Hibernate가 테이블 생성 안 하도록 설정
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
@@ -19,6 +20,4 @@ spring:
 
   sql:
     init:
-      mode: never
-      schema-locations: classpath:schema.sql  # 테이블 생성 쿼리
-      data-locations: classpath:data.sql      # 초기 데이터 삽입
+      mode: always

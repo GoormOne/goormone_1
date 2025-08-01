@@ -28,7 +28,7 @@ public class Review {
     @Column(name = "user_id", nullable = false, length = 10)
     private String userId; // FK로 연결 예정
 
-    // sotre_name
+    // store_name
 
     @Column(name = "rating", nullable = false)
     private Short rating; // SMALLINT
