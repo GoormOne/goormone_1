@@ -33,8 +33,9 @@ public interface StoreRepository extends JpaRepository<Store, UUID> {
 
 
     @Query("SELECT DISTINCT s FROM Store s " +
-            "JOIN FETCH s.menus m " +
-            "WHERE LOWER(s.storeName) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-            "   OR LOWER(m.menuName) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+            "LEFT JOIN FETCH s.menus m " +
+            "WHERE s.deletedAt IS NULL AND (" +
+            "LOWER(s.storeName) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
+            "OR LOWER(m.menuName) LIKE LOWER(CONCAT('%', :keyword, '%')))")
     List<Store> searchStoresByKeyword(@Param("keyword") String keyword);
 }

@@ -28,8 +28,7 @@ public class StoreController {
     @PostMapping
     public ResponseEntity<ApiResponse<StoreRegisterDto>> registerStore(
             @RequestBody @Valid final StoreRegisterDto storeRegisterDto) {
-
-        Store savedStore = storeService.saveStore(storeRegisterDto);
+         Store savedStore = storeService.saveStore(storeRegisterDto);
 
         ApiResponse<StoreRegisterDto> response;
 
@@ -69,19 +68,18 @@ public class StoreController {
     public ResponseEntity<ApiResponse<StoreDto>> getStore(
             @PathVariable String storeId
     ) {
-        StoreDto storeDto = storeService.findStoreById(storeId);
         ApiResponse<StoreDto> response;
-
-        if (storeId != null) {
+        try {
+            StoreDto storeDto = storeService.findStoreById(storeId);
             response = ApiResponse.success(storeDto);
-        } else {
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
             ErrorResponse error = new ErrorResponse();
-            error.setCode(HttpStatus.BAD_REQUEST.value());
-            error.setMessage("해당 매장 정보가 없습니다.");
+            error.setCode(HttpStatus.NOT_FOUND.value());
+            error.setMessage(e.getMessage());
             response = ApiResponse.failure(error);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/{storeId}/regions")

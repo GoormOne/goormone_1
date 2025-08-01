@@ -30,21 +30,17 @@ public class StoreService {
     private final ReviewAverageRepository reviewAverageRepository;
     private final StoreRegionRepository storeRegionRepository;
 
-    //public void deleteStore(final String storeId) {}
-
-
-//    public StoreListDto getStore(final String storeId) {
-//        //return storeRepository.findById(storeId);
-//    }
-
-//    public void getStoreRegions (final String storeId) {    }
-//    public void registerStoreRegion(final String storeId, final String regionId) {}
-//    public void deleteStoreRegion(final String storeId, final String regionId) {}
 
     public StoreDto findStoreById(String storeId) {
         UUID storeuuid = UUID.fromString(storeId);
         Store store = storeRepository.findByStoreId(storeuuid)
-                .orElseThrow(() -> new RuntimeException("Store not found"));
+                .map(s -> {
+                    if (s.getDeletedAt() != null) {
+                        throw new RuntimeException("이미 삭제된 매장입니다.");
+                    }
+                    return s;
+                })
+                .orElseThrow(() -> new RuntimeException("해당 매장이 존재하지 않습니다."));
 
         return StoreDto.builder()
                 .storeId(store.getStoreId().toString())
@@ -92,9 +88,11 @@ public class StoreService {
 
         //@피드백 하나의 리스트로 저장하는 방법을 생각해볼것
 
-        return storeRepository.save(store);
+//        return storeRepository.save(store);
 
-
+        Store savedStore = storeRepository.save(store);
+        System.out.println("Saved store ID: " + savedStore.getStoreId()); // ✅ 이거 추가해보세요
+        return savedStore;
     }
 
     @Transactional
@@ -116,7 +114,13 @@ public class StoreService {
 
     public RegionListDto getRegions(String storeId) {
         Store store = storeRepository.findByStoreId(UUID.fromString(storeId))
-                .orElseThrow(() -> new RuntimeException("Store not found"));
+                .map(s -> {
+                    if (s.getDeletedAt() != null) {
+                        throw new RuntimeException("이미 삭제된 매장입니다.");
+                    }
+                    return s;
+                })
+                .orElseThrow(() -> new RuntimeException("해당 매장이 존재하지 않습니다."));
 
         List<RegionDto> regionDtos = store.getRegions().stream()
                 .map(region -> new RegionDto(
@@ -133,7 +137,13 @@ public class StoreService {
     @Transactional
     public List<UUID> registerRegions(String storeId, RegionListAddressDto regionListAddressDto) {
         Store store = storeRepository.findByStoreId(UUID.fromString(storeId))
-                .orElseThrow(() -> new RuntimeException("store not found"));
+                .map(s -> {
+                    if (s.getDeletedAt() != null) {
+                        throw new RuntimeException("이미 삭제된 매장입니다.");
+                    }
+                    return s;
+                })
+                .orElseThrow(() -> new RuntimeException("해당 매장이 존재하지 않습니다."));
 
         List<UUID> regionIds = new ArrayList<>();
 
@@ -165,7 +175,13 @@ public class StoreService {
     @Transactional
     public List<UUID> deleteRegion(String storeId, RegionListAddressDto regionListAddressDto) {
         Store store = storeRepository.findByStoreId(UUID.fromString(storeId))
-                .orElseThrow(() -> new RuntimeException("Store not found"));
+                .map(s -> {
+                    if (s.getDeletedAt() != null) {
+                        throw new RuntimeException("이미 삭제된 매장입니다.");
+                    }
+                    return s;
+                })
+                .orElseThrow(() -> new RuntimeException("해당 매장이 존재하지 않습니다."));
 
         List<UUID> deletedRegionIds = new ArrayList<>();
 
