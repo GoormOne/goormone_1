@@ -18,29 +18,25 @@ configurations {
 		extendsFrom annotationProcessor
 	}
 }
+
 repositories {
 	mavenCentral()
 }
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
-//	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
-//	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
 	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.projectlombok:lombok'
+	runtimeOnly 'org.postgresql:postgresql'
+	implementation 'com.google.code.findbugs:jsr305:3.0.2'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.boot:spring-boot-testcontainers'
-	testImplementation 'com.fasterxml.jackson.core:jackson-databind'
-//	testImplementation 'org.springframework.security:spring-security-test'
-	testImplementation 'org.testcontainers:junit-jupiter'
-	testImplementation 'org.testcontainers:postgresql'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
 
+
 }
+

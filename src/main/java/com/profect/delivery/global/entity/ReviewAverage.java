@@ -1,0 +1,27 @@
+package com.profect.delivery.global.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.UUID;
+
+@Entity
+@Table(name = "p_review_average")
+@Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class ReviewAverage {
+
+    @Id
+    @Column(name = "store_id")
+    private UUID storeId;
+
+    @Column(name = "count", nullable = false)
+    private int count;
+
+    @Column(name = "total", nullable = false)
+    private int total;
+
+
+}

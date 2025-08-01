@@ -40,6 +40,8 @@ out/
 .DS_Store # 앞으로 추적되지 않도록
 
 
+/build/generated/
 postgres-data/
-
 .idea/modules.xml
+
+

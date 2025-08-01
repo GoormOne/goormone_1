@@ -7,6 +7,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class RegionListDto {
-    private List<RegionDto> regions;
+public class StoreSearchListDto {
+    private List<StoreSearchDto> stores;
+
 }

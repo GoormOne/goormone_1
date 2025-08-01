@@ -3,14 +3,9 @@ package com.profect.delivery.domain.store.service;
 import com.profect.delivery.domain.store.dto.request.RegionAddressDto;
 import com.profect.delivery.domain.store.dto.request.RegionListAddressDto;
 import com.profect.delivery.domain.store.dto.request.StoreRegisterDto;
-import com.profect.delivery.domain.store.dto.response.RegionDto;
-import com.profect.delivery.domain.store.dto.response.RegionListDto;
-import com.profect.delivery.domain.store.dto.response.StoreDto;
+import com.profect.delivery.domain.store.dto.response.*;
 
-import com.profect.delivery.domain.store.repository.RegionRepository;
-import com.profect.delivery.domain.store.repository.StoreCategoryRepository;
-import com.profect.delivery.domain.store.repository.StoreRegionRepository;
-import com.profect.delivery.domain.store.repository.StoreRepository;
+import com.profect.delivery.domain.store.repository.*;
 import com.profect.delivery.global.entity.*;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -18,11 +13,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.time.LocalTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,7 +27,7 @@ public class StoreService {
     private final StoreRepository storeRepository;
     private final StoreCategoryRepository storeCategoryRepository;
     private final RegionRepository regionRepository;
-
+    private final ReviewAverageRepository reviewAverageRepository;
     private final StoreRegionRepository storeRegionRepository;
 
     //public void deleteStore(final String storeId) {}
@@ -198,14 +194,51 @@ public class StoreService {
 
         return deletedRegionIds;
     }
+
+    public boolean isStoreOpen(Store store){
+        LocalTime now = LocalTime.now();
+
+        if (store.getOpenTime() == null || store.getCloseTime() == null) {
+            System.out.println("운영시간 정보가 없습니다.");
+            return false;
+        }
+        System.out.println("store: " + store.getStoreId());
+        System.out.println("openTime: " + store.getOpenTime());  // null? → 로딩 안 된 것
+        System.out.println("closeTime: " + store.getCloseTime());
+        return now.isAfter(store.getOpenTime()) && now.isBefore(store.getCloseTime());
+    }
+
+    public BigDecimal calculateAverageRating(UUID storeId) {
+        List<Object[]> resultList = reviewAverageRepository.findReviewStatsByStoreId(storeId);
+
+        if (resultList.isEmpty()) return BigDecimal.ZERO;
+
+        Object[] result = resultList.get(0);
+
+        System.out.println(">>>> result" + Arrays.toString(result));
+
+        int count = (int) result[0];
+        int total = (int) result[1];
+
+        if (count == 0) return BigDecimal.ZERO;
+
+        return BigDecimal.valueOf(total).divide(BigDecimal.valueOf(count), 2, RoundingMode.HALF_UP);
+    }
+    public List<StoreSearchDto> searchStoreByKeyword(String keyword) {
+        List<Store> stores = storeRepository.searchStoresByKeyword(keyword);
+
+
+        return stores.stream().map(store -> new StoreSearchDto(
+                store.getStoreId().toString(),
+                store.getStoreName(),
+                store.getStoreDescription(),
+                calculateAverageRating(store.getStoreId()),
+                isStoreOpen(store)
+        )).collect(Collectors.toList());
+    }
+
+
 }
 
 
-//
-//    public Optional<Store> getStoreById(Long storeid) {
-//        return storeRepository.findById(storeid);
-//    }
-//
-//    public urn storeRepository.findAll();
-//    }List<Store> getAllStores() {
-////        ret
+

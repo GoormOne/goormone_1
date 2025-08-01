@@ -6,6 +6,7 @@ import org.springframework.data.annotation.CreatedBy;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -54,6 +55,12 @@ public class Store {
     @Column(name = "store_longitude", precision = 10, scale = 6)
     private BigDecimal storeLongitude;
 
+    @Column(name = "open_time")
+    private LocalTime openTime;
+
+    @Column(name="close_time")
+    private LocalTime closeTime;
+
     @Column(name = "is_banned", nullable = false)
     private Boolean isBanned = false;
     @Column(name = "created_at", nullable = false)
@@ -82,6 +89,8 @@ public class Store {
     @Column(name = "deleted_rs", length = 100)
     private String deletedReason;
 
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Menu> menus = new ArrayList<>();
 
     public List<Region> getRegions() {
         return storeRegions.stream()

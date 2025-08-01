@@ -17,7 +17,6 @@ public class StoreDto {
     private String storeName;
     private String description;
     private String category;
-
     private AddressDto address;           // 주소 객체
     private String zip_cd;
     private String store_phone;

@@ -1,30 +1,13 @@
-DO $$ BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'role_type') THEN
 CREATE TYPE role_type AS ENUM ('CUSTOMER', 'OWNER', 'MANAGER', 'MASTER');
-END IF;
-END;
-$$;
 
-DO $$ BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'cart_status') THEN
+
 CREATE TYPE cart_status AS ENUM ('ACTIVE', 'ORDERED', 'ABANDONED');
-END IF;
-END;
-$$;
 
-DO $$ BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'payment_method') THEN
+
 CREATE TYPE payment_method AS ENUM ('CARD');
-END IF;
-END;
-$$;
 
-DO $$ BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'payment_result') THEN
 CREATE TYPE payment_result AS ENUM ('PENDING', 'SUCCESS', 'CANCELED', 'FAILED');
-END IF;
-END;
-$$;
+
 
 CREATE TABLE "p_users" (
   "user_id" varchar(10) NOT NULL PRIMARY KEY,
@@ -120,23 +103,45 @@ CREATE TABLE "p_menu_category" (
   "deleted_at" timestamp
 );
 
-CREATE TABLE "p_menus" (
-  "menu_id" uuid NOT NULL PRIMARY KEY,
-  "store_id" uuid NOT NULL,
-  "menu_category_id" uuid NOT NULL,
-  "menu_name" varchar(20) NOT NULL,
-  "menu_price" int NOT NULL,
-  "menu_description" text NOT NULL,
-  "is_public" boolean NOT NULL,
-  "created_at" timestamp NOT NULL,
-  "created_by" varchar(10) NOT NULL,
-  "updated_at" timestamp,
-  "updated_by" varchar(10),
-  "deleted_at" timestamp,
-  "deleted_by" varchar(10),
-  "deleted_rs" varchar(100)
-);
+-- CREATE TABLE "p_menus" (
+--   "menu_id" uuid NOT NULL PRIMARY KEY,
+--   "store_id" uuid NOT NULL,
+--   "menu_category_id" uuid NOT NULL,
+--   "menu_name" varchar(20) NOT NULL,
+--   "menu_price" int NOT NULL,
+--   "menu_description" text NOT NULL,
+--   "is_public" boolean NOT NULL,
+--   "created_at" timestamp NOT NULL,
+--   "created_by" varchar(10) NOT NULL,
+--   "updated_at" timestamp,
+--   "updated_by" varchar(10),
+--   "deleted_at" timestamp,
+--   "deleted_by" varchar(10),
+--   "deleted_rs" varchar(100)
+-- );
+CREATE TABLE p_menus (
+                         menu_id UUID NOT NULL,
+                         store_id UUID NOT NULL,
+                         menu_category_id UUID,
+                         menu_name VARCHAR(20),
+                         menu_price INT,
+                         menu_description TEXT,
+                         is_public BOOLEAN,
+                         created_at TIMESTAMP,
+                         created_by VARCHAR(10),
+                         updated_at TIMESTAMP DEFAULT NULL,
+                         updated_by VARCHAR(10) DEFAULT NULL,
+                         deleted_at TIMESTAMP DEFAULT NULL,
+                         deleted_by VARCHAR(10) DEFAULT NULL,
+                         deleted_rs VARCHAR(100) DEFAULT NULL,
 
+
+                         PRIMARY KEY (menu_id, store_id),
+
+
+                         FOREIGN KEY (store_id) REFERENCES p_stores(store_id),
+                         FOREIGN KEY (menu_category_id) REFERENCES p_menu_category(menu_category_id)
+);
 CREATE TABLE "p_menu_photos" (
   "menu_photo_id" uuid NOT NULL PRIMARY KEY,
   "menu_id" uuid NOT NULL,
@@ -219,6 +224,11 @@ CREATE TABLE "p_review_summary" (
   "created_by" varchar(10) NOT NULL
 );
 
+CREATE TABLE p_review_average (
+                                  store_id UUID PRIMARY KEY REFERENCES p_stores(store_id),
+                                  count INT,
+                                  total INT
+);
 CREATE TABLE "p_payments" (
   "payment_id" uuid NOT NULL PRIMARY KEY,
   "user_id" varchar(10) NOT NULL,
