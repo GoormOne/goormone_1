@@ -1,6 +1,5 @@
 package com.profect.delivery.global.entity;
 
-
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -1,5 +1,4 @@
 package com.profect.delivery.global.DTO;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
