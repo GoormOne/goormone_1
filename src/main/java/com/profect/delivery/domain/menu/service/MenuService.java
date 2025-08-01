@@ -1,22 +1,18 @@
-package com.profect.delivery.menu.service;
+package com.profect.delivery.domain.menu.service;
 
 import com.profect.delivery.global.exception.ConflictException;
 import com.profect.delivery.global.exception.NotFoundException;
-import com.profect.delivery.menu.dto.CreateMenuRequest;
-import com.profect.delivery.menu.dto.CreateMenuResponse;
-import com.profect.delivery.menu.dto.UpdateMenuRequest;
-import com.profect.delivery.menu.dto.UpdateMenuResponse;
-import com.profect.delivery.menu.entity.Menu;
-import com.profect.delivery.menu.repository.MenuRepository;
+import com.profect.delivery.domain.menu.dto.CreateMenuRequest;
+import com.profect.delivery.domain.menu.dto.CreateMenuResponse;
+import com.profect.delivery.domain.menu.dto.UpdateMenuRequest;
+import com.profect.delivery.domain.menu.dto.UpdateMenuResponse;
+import com.profect.delivery.domain.menu.entity.Menu;
+import com.profect.delivery.domain.menu.repository.MenuRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service

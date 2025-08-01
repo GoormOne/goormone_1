@@ -1,6 +1,4 @@
-package com.profect.delivery.menu.dto;
-
-import com.profect.delivery.menu.entity.Menu;
+package com.profect.delivery.domain.menu.dto;
 
 import java.util.UUID;
 

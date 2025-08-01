@@ -1,21 +1,17 @@
-package com.profect.delivery.menu.controller;
+package com.profect.delivery.domain.menu.controller;
 
 import com.profect.delivery.global.dto.ApiResponse;
-import com.profect.delivery.global.dto.ErrorResponse;
-import com.profect.delivery.menu.dto.CreateMenuRequest;
-import com.profect.delivery.menu.dto.CreateMenuResponse;
-import com.profect.delivery.menu.dto.UpdateMenuRequest;
-import com.profect.delivery.menu.dto.UpdateMenuResponse;
-import com.profect.delivery.menu.entity.Menu;
-import com.profect.delivery.menu.service.MenuService;
-import jakarta.servlet.http.HttpServletRequest;
+import com.profect.delivery.domain.menu.dto.CreateMenuRequest;
+import com.profect.delivery.domain.menu.dto.CreateMenuResponse;
+import com.profect.delivery.domain.menu.dto.UpdateMenuRequest;
+import com.profect.delivery.domain.menu.dto.UpdateMenuResponse;
+import com.profect.delivery.domain.menu.service.MenuService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @RestController
