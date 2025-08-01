@@ -1,5 +1,6 @@
 package com.profect.delivery.global.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ApiResponse<T> {
+    @JsonProperty("isSuccess")
     private boolean isSuccess;
+
     private T data;
     private ErrorResponse error;
 

@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+<<<<<<< HEAD
+=======
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.profect.delivery.delivery-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/com.profect.delivery.delivery-service.main.iml" />
+>>>>>>> develop
       <module fileurl="file://$PROJECT_DIR$/.idea/delivery-service.iml" filepath="$PROJECT_DIR$/.idea/delivery-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/delivery-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/delivery-service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/delivery-service.test.iml" filepath="$PROJECT_DIR$/.idea/modules/delivery-service.test.iml" />

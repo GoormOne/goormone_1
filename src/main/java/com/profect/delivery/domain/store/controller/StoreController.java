@@ -1,13 +1,16 @@
 package com.profect.delivery.domain.store.controller;
 
-
+import com.profect.delivery.domain.store.dto.request.RegionAddressDto;
 import com.profect.delivery.domain.store.dto.request.RegionListAddressDto;
-import com.profect.delivery.domain.store.dto.response.*;
+import com.profect.delivery.domain.store.dto.response.RegionDto;
+import com.profect.delivery.domain.store.dto.response.RegionListDto;
+import com.profect.delivery.domain.store.dto.response.StoreDto;
 import com.profect.delivery.global.dto.ErrorResponse;
 import com.profect.delivery.domain.store.dto.request.StoreRegisterDto;
 import com.profect.delivery.domain.store.service.StoreService;
 import com.profect.delivery.global.dto.ApiResponse;
 import com.profect.delivery.global.entity.Store;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,78 +27,80 @@ public class StoreController {
 
     private final StoreService storeService;
 
+    //private final StoreService storeService;
 
     @PostMapping
     public ResponseEntity<ApiResponse<StoreRegisterDto>> registerStore(
-            @RequestBody @Valid final StoreRegisterDto storeRegisterDto) {
-         Store savedStore = storeService.saveStore(storeRegisterDto);
-
-        ApiResponse<StoreRegisterDto> response;
-
-        if (savedStore != null) {
-            System.out.println("매장을 등록하였습니다");
-            response = ApiResponse.success(storeRegisterDto);
-
-        } else {
-            ErrorResponse error = new ErrorResponse();
-            error.setCode(HttpStatus.BAD_REQUEST.value());
-            error.setMessage("매장 정보 등록에 실패하였습니다.");
-            response = ApiResponse.failure(error);
+            @RequestBody @Valid final StoreRegisterDto dto,
+            HttpServletRequest request
+    ) {
+        try {
+            Store saved = storeService.saveStore(dto);
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(ApiResponse.success(dto));
+        } catch (RuntimeException e) {   // 중복 등 비즈니스 예외
+            ErrorResponse err = ErrorResponse.of(
+                    HttpStatus.BAD_REQUEST.value(),
+                    e.getMessage(),
+                    request.getRequestURI());
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(ApiResponse.failure(err));
         }
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping("/{storeId}")
     public ResponseEntity<ApiResponse<String>> deleteStore(
-            @PathVariable("storeId") String storeId) {
-        //storeService.deleteStore(storeId);
-        boolean success = storeService.deleteStore(storeId);
-        ApiResponse<String> response;
-        if (success) {
-            System.out.println(storeId + "  매장을 삭제하였습니다");
-            response = ApiResponse.success(storeId);
-        } else {
-            ErrorResponse error = new ErrorResponse();
-            error.setCode(HttpStatus.BAD_REQUEST.value());
-            error.setMessage("매장 삭제에 실패하였습니다.");
-            response = ApiResponse.failure(error);
+            @PathVariable("storeId") String storeId,
+            HttpServletRequest request
+    ) {
+        if (storeService.deleteStore(storeId)) {
+            return ResponseEntity.ok(ApiResponse.success(storeId));
         }
-        return ResponseEntity.ok(response);
+        ErrorResponse err = ErrorResponse.of(
+                HttpStatus.BAD_REQUEST.value(),
+                "매장 삭제에 실패하였습니다.",
+                request.getRequestURI());
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.failure(err));
     }
 
     @GetMapping("/{storeId}")
     public ResponseEntity<ApiResponse<StoreDto>> getStore(
-            @PathVariable String storeId
+            @PathVariable String storeId,
+            HttpServletRequest request
     ) {
-        ApiResponse<StoreDto> response;
-        try {
-            StoreDto storeDto = storeService.findStoreById(storeId);
-            response = ApiResponse.success(storeDto);
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            ErrorResponse error = new ErrorResponse();
-            error.setCode(HttpStatus.NOT_FOUND.value());
-            error.setMessage(e.getMessage());
-            response = ApiResponse.failure(error);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        StoreDto dto = storeService.findStoreById(storeId);
+        if (dto != null) {
+            return ResponseEntity.ok(ApiResponse.success(dto));
         }
+        ErrorResponse err = ErrorResponse.of(
+                HttpStatus.NOT_FOUND.value(),
+                "해당 매장 정보가 없습니다.",
+                request.getRequestURI());
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(ApiResponse.failure(err));
     }
 
     @GetMapping("/{storeId}/regions")
     public ResponseEntity<ApiResponse<RegionListDto>> getStoreRegions(
-            @PathVariable String storeId
+            @PathVariable String storeId,
+            HttpServletRequest request
     ) {
         try {
-            RegionListDto regionListDto = storeService.getRegions(storeId);
-            ApiResponse<RegionListDto> response = ApiResponse.success(regionListDto);
-            return ResponseEntity.ok(response);
+            RegionListDto regions = storeService.getRegions(storeId);
+            return ResponseEntity.ok(ApiResponse.success(regions));
         } catch (RuntimeException e) {
-            ErrorResponse error = new ErrorResponse();
-            error.setCode(HttpStatus.NOT_FOUND.value());
-            error.setMessage(e.getMessage());
-            ApiResponse<RegionListDto> response = ApiResponse.failure(error);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            ErrorResponse err = ErrorResponse.of(
+                    HttpStatus.NOT_FOUND.value(),
+                    e.getMessage(),
+                    request.getRequestURI());
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.failure(err));
         }
     }
 
@@ -103,20 +108,20 @@ public class StoreController {
     @PostMapping("/{storeId}/regions")
     public ResponseEntity<ApiResponse<List<UUID>>> registerStoreRegions(
             @PathVariable String storeId,
-            @RequestBody final RegionListAddressDto regionListAddressDto) {
+            @RequestBody final RegionListAddressDto regionListAddressDto,
+            HttpServletRequest request
+    ) {
         try {
-            System.out.println("Request Dto: " + regionListAddressDto);
-            System.out.println("Regions: " + regionListAddressDto.getRegionListAddressDto());
-
-            List<UUID> registerRegionIds = storeService.registerRegions(storeId, regionListAddressDto);
-            ApiResponse<List<UUID>> response = ApiResponse.success(registerRegionIds);
-            return ResponseEntity.ok(response);
+            List<UUID> ids = storeService.registerRegions(storeId, regionListAddressDto);
+            return ResponseEntity.ok(ApiResponse.success(ids));
         } catch (RuntimeException e) {
-            ErrorResponse error = new ErrorResponse();
-            error.setCode(HttpStatus.NOT_FOUND.value());
-            error.setMessage(e.getMessage());
-            ApiResponse<List<UUID>> response = ApiResponse.failure(error);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            ErrorResponse err = ErrorResponse.of(
+                    HttpStatus.NOT_FOUND.value(),
+                    e.getMessage(),
+                    request.getRequestURI());
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.failure(err));
         }
     }
 
@@ -124,41 +129,45 @@ public class StoreController {
     @DeleteMapping("/{storeId}/regions")
     public ResponseEntity<ApiResponse<List<UUID>>> deleteStoreRegions(
             @PathVariable String storeId,
-            @RequestBody final RegionListAddressDto regionListAddressDto
-
+            @RequestBody final RegionListAddressDto regionListAddressDto,
+            HttpServletRequest request
     ) {
         try {
-            List<UUID> deleteRegionIds = storeService.deleteRegion(storeId, regionListAddressDto);
-            ApiResponse<List<UUID>> response = ApiResponse.success(deleteRegionIds);
-            return ResponseEntity.ok(response);
-
+            List<UUID> ids = storeService.deleteRegion(storeId, regionListAddressDto);
+            return ResponseEntity.ok(ApiResponse.success(ids));
         } catch (RuntimeException e) {
-            ErrorResponse error = new ErrorResponse();
-            error.setCode(HttpStatus.NOT_FOUND.value());
-            error.setMessage(e.getMessage());
-            ApiResponse<List<UUID>> response = ApiResponse.failure(error);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            ErrorResponse err = ErrorResponse.of(
+                    HttpStatus.NOT_FOUND.value(),
+                    e.getMessage(),
+                    request.getRequestURI());
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.failure(err));
         }
 
     }
-
-
-    @GetMapping("/search")
-    public ResponseEntity<List<StoreSearchDto>> searchStores(
-            @RequestParam(defaultValue = "") String keyword
-    ) {
-        List<StoreSearchDto> storeSearchList = storeService.searchStoreByKeyword(keyword);
-
-        if (storeSearchList.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(storeSearchList);
-        }
-
-        return ResponseEntity.ok(storeSearchList);
-    }
-
 }
 
+//
+//    @GetMapping("/search/categoryName")
+//    public ResponseEntity<ResponseDto<Object>> searchStore(
+//        @RequestParam(defaultValue = "") String categoryName
+//    )
+//    {
+//        return ResponseEntity.ok().body(ResponseDto.success());
+//    }
 
+//    public class UserController {
+//        private final UserService userService;
+//
+//        @GetMapping("/{info}")
+//        public ResponseEntity<User> getUser(@PathVariable Long id) {
+//            return userService.getUserById(id)
+//                    .map(ResponseEntity::ok) //응답형태
+//                    .orElse(ResponseEntity.notFound().build());
+//        }
+//
+//    }
 
 
 

@@ -2,11 +2,10 @@ package com.profect.delivery.domain.users.service;
 
 import com.profect.delivery.domain.users.dto.UserUpdateRequestDto;
 import com.profect.delivery.domain.users.repository.UserRepository;
-import com.profect.delivery.global.advice.UserNotFoundException;
+import com.profect.delivery.global.exception.UserNotFoundException;
 import com.profect.delivery.global.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
