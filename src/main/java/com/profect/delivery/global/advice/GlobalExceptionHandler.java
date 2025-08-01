@@ -1,6 +1,6 @@
 package com.profect.delivery.global.advice; // 실제 패키지 경로에 맞게 수정
-import com.profect.delivery.global.DTO.ApiResponse;
-import com.profect.delivery.global.DTO.ErrorResponse;
+import com.profect.delivery.global.dto.ApiResponse;
+import com.profect.delivery.global.dto.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
