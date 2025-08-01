@@ -3,18 +3,14 @@ package com.profect.delivery.domain.users.controller;
 import com.profect.delivery.domain.users.dto.*;
 import com.profect.delivery.domain.users.service.UserAddressService;
 import com.profect.delivery.domain.users.service.UserService;
-import com.profect.delivery.global.DTO.ApiResponse;
-import com.profect.delivery.global.DTO.ErrorResponse;
-import com.profect.delivery.global.advice.GlobalExceptionHandler.*;
-import com.profect.delivery.global.advice.UserAddressNotFoundException;
-import com.profect.delivery.global.advice.UserNotFoundException;
+import com.profect.delivery.global.dto.ApiResponse;
+import com.profect.delivery.global.exception.UserAddressNotFoundException;
+import com.profect.delivery.global.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 

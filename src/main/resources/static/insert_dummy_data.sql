@@ -26,20 +26,20 @@ VALUES
 -- INSERT INTO p_stores
 INSERT INTO p_stores (
   store_id, user_id, stores_category_id, store_name, store_description,
-  address1, address2, zip_cd, store_phone, store_latitude, store_longitude,
+  address1, address2, zip_cd, store_phone, store_latitude, store_longitude, open_time, close_time,
   is_banned, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by, deleted_rs
 ) VALUES
 (
   gen_random_uuid(), 'user002', (SELECT stores_category_id FROM p_stores_category LIMIT 1),
   '강남고기집', '고기 맛집입니다.',
   '서울시 강남구', '101호', '06234', '010-1111-1111', 37.4981, 127.0276,
-  false, now(), 'user002', NULL, NULL, NULL, NULL, NULL
+  now(), now(), false, now(), 'user002', NULL, NULL, NULL, NULL, NULL
 ),
 (
   gen_random_uuid(), 'user002', (SELECT stores_category_id FROM p_stores_category OFFSET 1 LIMIT 1),
   '서초분식', '분식 전문점입니다.',
   '서울시 서초구', '202호', '06611', '010-2222-2222', 37.4923, 127.0145,
-  false, now(), 'user002', NULL, NULL, NULL, NULL, NULL
+  now(), now(), false, now(), 'user002', NULL, NULL, NULL, NULL, NULL
 );
 -- INSERT INTO p_stores_regions
 INSERT INTO p_stores_regions (store_id, region_id, created_at)

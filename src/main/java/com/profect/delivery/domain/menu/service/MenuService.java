@@ -1,5 +1,9 @@
 package com.profect.delivery.domain.menu.service;
 
+import com.profect.delivery.domain.menu.repository.MenuCategoryRepository;
+import com.profect.delivery.domain.store.repository.StoreRepository;
+import com.profect.delivery.global.entity.MenuCategory;
+import com.profect.delivery.global.entity.Store;
 import com.profect.delivery.global.exception.ConflictException;
 import com.profect.delivery.global.exception.NotFoundException;
 import com.profect.delivery.domain.menu.dto.CreateMenuRequest;
@@ -19,18 +23,32 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class MenuService {
     private final MenuRepository menuRepository;
+    private final StoreRepository storeRepository;
+    private final MenuCategoryRepository menuCategoryRepository;
 
     public CreateMenuResponse createMenu(UUID storeId,
                                          CreateMenuRequest reqDto,
                                          String username) {
+
+        // Store 엔티티 조회
+        Store store = storeRepository.findByStoreId(storeId)
+                .orElseThrow(() -> new NotFoundException("STORE NOT FOUND"));
+
+        // 메뉴 카테고리 엔티티 조회
+        MenuCategory menuCategory = null;
+        if (reqDto.menuCategoryId() != null) {
+            menuCategory = menuCategoryRepository.findByMenuCategoryId(reqDto.menuCategoryId())
+                    .orElseThrow(() -> new NotFoundException("MENU CATEGORY NOT FOUND"));
+        }
+
         // 이름 중복 검사
-        if (menuRepository.existsByStoreIdAndMenuName(storeId, reqDto.menuName())) {
+        if (menuRepository.existsByStoreStoreIdAndMenuName(storeId, reqDto.menuName())) {
             throw new ConflictException("DUPLICATED MENU NAME");
         }
 
         Menu menu = Menu.builder()
-                        .storeId(storeId)
-                        .menuCategoryId(reqDto.menuCategoryId())
+                        .store(store)
+                        .menuCategory(menuCategory)
                         .menuName(reqDto.menuName())
                         .menuPrice(reqDto.menuPrice())
                         .menuDescription(reqDto.menuDescription())
@@ -49,15 +67,19 @@ public class MenuService {
                                          UpdateMenuRequest reqDto,
                                          String username) {
 
-        Menu menu = menuRepository.findByStoreIdAndMenuId(storeId, menuId)
+        Menu menu = menuRepository.findByStoreStoreIdAndMenuId(storeId, menuId)
                 .orElseThrow(() -> new NotFoundException("MENU NOT FOUND"));
         // 동일 이름 중복 확인
-        if (reqDto.menuName() != null && menuRepository.existsByStoreIdAndMenuNameAndMenuIdNot(storeId, reqDto.menuName(), menuId)) {
+        if (reqDto.menuName() != null && menuRepository.existsByStoreStoreIdAndMenuNameAndMenuIdNot(storeId, reqDto.menuName(), menuId)) {
             throw new ConflictException("DUPLICATED MENU NAME");
         }
 
         // 엔티티 무결성을 위해 setter 사용 자제
-        if (reqDto.menuCategoryId()  != null) menu.changeCategory(reqDto.menuCategoryId());
+        if (reqDto.menuCategoryId() != null) {
+            MenuCategory newCat = menuCategoryRepository.findByMenuCategoryId(reqDto.menuCategoryId())
+                    .orElseThrow(() -> new NotFoundException("MENU CATEGORY NOT FOUND"));
+            menu.changeCategory(newCat);
+        }
         if (reqDto.menuName()        != null) menu.changeName(reqDto.menuName());
         if (reqDto.menuPrice()       != null) menu.changePrice(reqDto.menuPrice());
         if (reqDto.menuDescription() != null) menu.changeDescription(reqDto.menuDescription());
@@ -69,7 +91,7 @@ public class MenuService {
 
     @Transactional
     public void deleteMenu(UUID storeId, UUID menuId, String username) {
-        Menu menu = menuRepository.findByStoreIdAndMenuId(storeId, menuId)
+        Menu menu = menuRepository.findByStoreStoreIdAndMenuId(storeId, menuId)
                 .orElseThrow(() -> new NotFoundException("MENU NOT FOUND"));
 
         menu.auditDelete(username);

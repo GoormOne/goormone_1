@@ -56,7 +56,7 @@ public class Menu {
 
     public void changeName(String name)               { this.menuName = name; }
     public void changePrice(Integer price)            { this.menuPrice = price; }
-    public void changeCategory(UUID categoryId)       { this.menuCategoryId = categoryId; }
+    public void changeCategory(MenuCategory category) { this.menuCategory = category; }
     public void changeDescription(String description) { this.menuDescription = description; }
     public void changeIsPublic(Boolean isPublic)      { this.isPublic = isPublic; }
 
