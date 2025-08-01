@@ -3,13 +3,16 @@ spring:
     name: sample-project
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/sample
+#    url: jdbc:postgresql://localhost:5432/sample
+    url: jdbc:postgresql://localhost:5432/postgres
     driver-class-name: org.postgresql.Driver
     username: user
     password: password
 
   jpa:
-    hibernate.ddl-auto: create
+#    hibernate.ddl-auto: create
+    hibernate:
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:

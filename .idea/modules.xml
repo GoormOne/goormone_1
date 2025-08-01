@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.profect.delivery.delivery-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/com.profect.delivery.delivery-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/delivery-service.iml" filepath="$PROJECT_DIR$/.idea/delivery-service.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/delivery-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/delivery-service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/delivery-service.test.iml" filepath="$PROJECT_DIR$/.idea/modules/delivery-service.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/goormOne.iml" filepath="$PROJECT_DIR$/.idea/goormOne.iml" />
     </modules>
   </component>
 </project>
