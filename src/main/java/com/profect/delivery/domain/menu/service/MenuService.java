@@ -6,7 +6,7 @@ import com.profect.delivery.domain.menu.dto.CreateMenuRequest;
 import com.profect.delivery.domain.menu.dto.CreateMenuResponse;
 import com.profect.delivery.domain.menu.dto.UpdateMenuRequest;
 import com.profect.delivery.domain.menu.dto.UpdateMenuResponse;
-import com.profect.delivery.domain.menu.entity.Menu;
+import com.profect.delivery.global.entity.Menu;
 import com.profect.delivery.domain.menu.repository.MenuRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
