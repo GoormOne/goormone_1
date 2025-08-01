@@ -104,3 +104,4 @@ INSERT INTO p_errors (error_id, user_id, request_url, http_method, error_code, e
 VALUES
     (gen_random_uuid(), 'user001', '/api/test', 'GET', '404', 'Not Found', '127.0.0.1', 'PostmanRuntime', now()),
     (gen_random_uuid(), 'user002', '/api/test2', 'POST', '500', 'Internal Server Error', '127.0.0.1', 'PostmanRuntime', now());
+

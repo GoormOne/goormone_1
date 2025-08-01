@@ -1,4 +1,4 @@
-package com.profect.delivery.global.DTO;
+package com.profect.delivery.global.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
