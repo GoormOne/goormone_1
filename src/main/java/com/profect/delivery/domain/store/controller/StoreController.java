@@ -1,8 +1,11 @@
 package com.profect.delivery.domain.store.controller;
 
 
+import com.profect.delivery.domain.store.dto.request.RegionAddressDto;
 import com.profect.delivery.domain.store.dto.request.RegionListAddressDto;
-import com.profect.delivery.domain.store.dto.response.*;
+import com.profect.delivery.domain.store.dto.response.RegionDto;
+import com.profect.delivery.domain.store.dto.response.RegionListDto;
+import com.profect.delivery.domain.store.dto.response.StoreDto;
 import com.profect.delivery.global.dto.ErrorResponse;
 import com.profect.delivery.domain.store.dto.request.StoreRegisterDto;
 import com.profect.delivery.domain.store.service.StoreService;
@@ -24,6 +27,7 @@ public class StoreController {
 
     private final StoreService storeService;
 
+    //private final StoreService storeService;
 
     @PostMapping
     public ResponseEntity<ApiResponse<StoreRegisterDto>> registerStore(
@@ -39,8 +43,6 @@ public class StoreController {
 
         } else {
             ErrorResponse error = new ErrorResponse();
-            error.setCode(HttpStatus.BAD_REQUEST.value());
-            error.setMessage("매장 정보 등록에 실패하였습니다.");
             response = ApiResponse.failure(error);
         }
 
@@ -143,24 +145,28 @@ public class StoreController {
         }
 
     }
-
-
-    @GetMapping("/search")
-    public ResponseEntity<List<StoreSearchDto>> searchStores(
-            @RequestParam(defaultValue = "") String keyword
-    ) {
-        List<StoreSearchDto> storeSearchList = storeService.searchStoreByKeyword(keyword);
-
-        if (storeSearchList.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(storeSearchList);
-        }
-
-        return ResponseEntity.ok(storeSearchList);
-    }
-
 }
 
+//
+//    @GetMapping("/search/categoryName")
+//    public ResponseEntity<ResponseDto<Object>> searchStore(
+//        @RequestParam(defaultValue = "") String categoryName
+//    )
+//    {
+//        return ResponseEntity.ok().body(ResponseDto.success());
+//    }
 
+//    public class UserController {
+//        private final UserService userService;
+//
+//        @GetMapping("/{info}")
+//        public ResponseEntity<User> getUser(@PathVariable Long id) {
+//            return userService.getUserById(id)
+//                    .map(ResponseEntity::ok) //응답형태
+//                    .orElse(ResponseEntity.notFound().build());
+//        }
+//
+//    }
 
 
 
