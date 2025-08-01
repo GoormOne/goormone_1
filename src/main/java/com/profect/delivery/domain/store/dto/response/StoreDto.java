@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalTime;
 import java.util.List;
 
 @Data
@@ -20,7 +21,8 @@ public class StoreDto {
     private AddressDto address;           // 주소 객체
     private String zip_cd;
     private String store_phone;
-
+    private LocalTime openTime;
+    private LocalTime closeTime;
     private StoreLocationDto store_location;  // 위치 객체
 
     @Data
@@ -40,6 +42,9 @@ public class StoreDto {
         private String store_latitude;
         private String store_longtitude;
     }
+
+
+
 
 //    public static record RegionDto(
 //            List<String> regionIds

@@ -1,10 +1,13 @@
 package com.profect.delivery.domain.store.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -37,5 +40,12 @@ public class StoreRegisterDto {
 
     private BigDecimal storeLatitude;
     private BigDecimal storeLongitude;
+
+    @JsonFormat(pattern = "HH:mm:ss")
+    private LocalTime openTime;
+
+    @JsonFormat(pattern = "HH:mm:ss")
+    private LocalTime closeTime;
+
 
 }

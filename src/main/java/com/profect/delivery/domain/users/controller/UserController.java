@@ -40,7 +40,7 @@ import java.util.stream.Collectors;
         public ResponseEntity<ApiResponse<?>> patchUser(
                 @RequestBody UserUpdateRequestDto userUpdateRequestDto) {
 
-            String currentUserId = "user0089";//인증인가에서 가져온 유저 id
+            String currentUserId = "user001";//인증인가에서 가져온 유저 id
             String updateby="admin";//인증인가에서 가져온 업데이트한 사람
 
             userService.updateUser(userUpdateRequestDto,currentUserId,updateby);
