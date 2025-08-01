@@ -1,15 +1,13 @@
 package com.profect.delivery.domain.store.controller;
 
 
-import com.profect.delivery.domain.store.dto.request.RegionAddressDto;
 import com.profect.delivery.domain.store.dto.request.RegionListAddressDto;
-import com.profect.delivery.domain.store.dto.response.RegionDto;
 import com.profect.delivery.domain.store.dto.response.RegionListDto;
 import com.profect.delivery.domain.store.dto.response.StoreDto;
-import com.profect.delivery.global.DTO.ErrorResponse;
+import com.profect.delivery.global.dto.ErrorResponse;
 import com.profect.delivery.domain.store.dto.request.StoreRegisterDto;
 import com.profect.delivery.domain.store.service.StoreService;
-import com.profect.delivery.global.DTO.ApiResponse;
+import com.profect.delivery.global.dto.ApiResponse;
 import com.profect.delivery.global.entity.Store;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
