@@ -1,9 +1,6 @@
 package com.profect.delivery.global.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.UUID;
@@ -18,11 +15,13 @@ public class ReviewAverage {
 
     @Id
     @Column(name = "store_id")
-    private UUID storeId; // PK이자 FK
+    private UUID storeId;
 
     @Column(name = "count", nullable = false)
     private int count;
 
     @Column(name = "total", nullable = false)
     private int total;
+
+
 }

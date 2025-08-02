@@ -1,8 +1,8 @@
 package com.profect.delivery.domain.review.controller;
 
-import com.profect.delivery.domain.review.dto.ReviewDto;
+import com.profect.delivery.domain.review.dto.ReviewResponseDto;
 import com.profect.delivery.domain.review.service.ReviewService;
-import com.profect.delivery.domain.review.dto.ReviewListDto;
+import com.profect.delivery.domain.review.dto.ReviewListResponseDto;
 import com.profect.delivery.domain.review.dto.ReviewRequestDto;
 import com.profect.delivery.global.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
@@ -24,22 +24,22 @@ public class ReviewController {
 
     // 리뷰 전체 조회
     @GetMapping("/{storeId}")
-    public ResponseEntity<ApiResponse<ReviewListDto>> getReviewsByStore(@PathVariable @Validated UUID storeId) {
-        ReviewListDto response = reviewService.getReviewsByStoreId(storeId);
+    public ResponseEntity<ApiResponse<ReviewListResponseDto>> getReviewsByStore(@PathVariable @Validated UUID storeId) {
+        ReviewListResponseDto response = reviewService.getReviewsByStoreId(storeId);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
     // 특정 리뷰 조회
     @GetMapping(value="/{storeId}", params="review_id")
-    public ResponseEntity<ApiResponse<ReviewDto>> getSingleReview(
+    public ResponseEntity<ApiResponse<ReviewResponseDto>> getSingleReview(
             @PathVariable UUID storeId, @RequestParam("review_id") UUID reviewId) {
         try {
-            ReviewDto dto = reviewService.getReviewByStoreIdAndReviewId(storeId, reviewId);
+            ReviewResponseDto dto = reviewService.getReviewByStoreIdAndReviewId(storeId, reviewId);
             return ResponseEntity.ok(ApiResponse.success(dto));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(ApiResponse.failure(
-                    new ErrorResponse(400, e.getMessage(), "/reviews/" + storeId, LocalDateTime.now().toString())
-            ));
+                    new ErrorResponse(400, e.getMessage(), "/reviews/" + storeId, LocalDateTime.now()
+            )));
         }
     }
 
@@ -88,7 +88,7 @@ public class ReviewController {
                     40000,
                     e.getMessage(),
                     "/reviews/" + storeId,
-                    LocalDateTime.now().toString()
+                    LocalDateTime.now()
             );
             return ResponseEntity.badRequest().body(ApiResponse.failure(error));
         }
@@ -115,7 +115,7 @@ public class ReviewController {
                                     400,
                                     e.getMessage(),
                                     "/reviews/" + storeId,
-                                    LocalDateTime.now().toString()
+                                    LocalDateTime.now()
                             )));
         }
     }

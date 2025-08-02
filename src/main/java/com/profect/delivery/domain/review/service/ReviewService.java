@@ -1,9 +1,10 @@
 package com.profect.delivery.domain.review.service;
 
-import com.profect.delivery.domain.review.dto.ReviewDto;
-import com.profect.delivery.domain.review.dto.ReviewListDto;
+import com.profect.delivery.domain.review.dto.ReviewResponseDto;
+import com.profect.delivery.domain.review.dto.ReviewListResponseDto;
 import com.profect.delivery.domain.review.dto.ReviewRequestDto;
 import com.profect.delivery.domain.review.repository.ReviewRepository;
+import com.profect.delivery.global.dto.ErrorResponse;
 import com.profect.delivery.global.entity.Review;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,10 +23,19 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
 //    private final ReviewAverageRepository reviewAverageRepository; // 평균 평점
 
-    public ReviewListDto getReviewsByStoreId(UUID storeId) {
+    public ReviewListResponseDto getReviewsByStoreId(UUID storeId) {
 
         // 리뷰 리스트 조회
         List<Review> reviews = reviewRepository.findReviewByStoreId(storeId);
+
+        if (reviews == null || reviews.isEmpty()) {
+            throw new IllegalArgumentException("해당 매장의 리뷰가 존재하지 않습니다.");
+            // 또는 로그만 찍고 빈 리스트로 계속 처리할 수도 있습니다.
+            // log.warn("No reviews found for storeId: {}", storeId);
+            // reviews = Collections.emptyList();
+        }
+
+
         // 리뷰 생성 날짜
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -38,8 +48,8 @@ public class ReviewService {
 //                : Math.round((avg.getTotal() / (double) avg.getCount()) * 10) / 10.0;
 
         // 리뷰 DTO 변환
-        List<ReviewDto> reviewDtos = reviews.stream()
-                .map(review -> ReviewDto.builder()
+        List<ReviewResponseDto> reviewDtos = reviews.stream()
+                .map(review -> ReviewResponseDto.builder()
                         .reviewId(review.getReviewId())
                         .userId(review.getUserId())
                         .createdAt(review.getCreatedAt().format(formatter))
@@ -48,7 +58,7 @@ public class ReviewService {
                         .build())
                 .collect(Collectors.toList());
 
-        return ReviewListDto.builder() // 나중에 공통된 부분은 한 줄로 리턴해주는 것이 좋음. 아래처럼 길게 작성하면 누락가능해서 원인 찾기 힘듦, 리스트 형태로 저장해서 만들기(유효성 체크가 쉬워짐)
+        return ReviewListResponseDto.builder() // 나중에 공통된 부분은 한 줄로 리턴해주는 것이 좋음. 아래처럼 길게 작성하면 누락가능해서 원인 찾기 힘듦, 리스트 형태로 저장해서 만들기(유효성 체크가 쉬워짐)
                 .storeId(storeId)
                 // storeName 추가해야함
 //                .averageRating(averageRating)
@@ -58,11 +68,11 @@ public class ReviewService {
     }
 
     @Transactional(readOnly = true)
-    public ReviewDto getReviewByStoreIdAndReviewId(UUID storeId, UUID reviewId) {
+    public ReviewResponseDto getReviewByStoreIdAndReviewId(UUID storeId, UUID reviewId) {
         Review review = reviewRepository.findByStoreIdAndReviewId(storeId, reviewId)
                 .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
 
-        return ReviewDto.builder()
+        return ReviewResponseDto.builder()
                 .reviewId(review.getReviewId())
                 .userId(review.getUserId())
                 .createdAt(review.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))

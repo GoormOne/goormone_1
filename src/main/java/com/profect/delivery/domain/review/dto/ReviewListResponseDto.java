@@ -12,11 +12,11 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-public class ReviewListDto {
+public class ReviewListResponseDto {
     private UUID storeId;
     //    private String storeName;
 //    private double averageRating;
     private int totalReviews;
-    private List<ReviewDto> reviews;    // reviews 라는 리뷰 객체들의 목록을 담는 필드, ReviewDto 객체를 여러개 담는 리스트
+    private List<ReviewResponseDto> reviews;    // reviews 라는 리뷰 객체들의 목록을 담는 필드, ReviewDto 객체를 여러개 담는 리스트
 
 }

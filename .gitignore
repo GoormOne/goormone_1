@@ -17,12 +17,14 @@ bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
 
+
 ### IntelliJ IDEA ###
 .idea
 *.iws
 *.iml
 *.ipr
 out/
+*.DS_Store
 !**/src/main/**/out/
 !**/src/test/**/out/
 
@@ -38,6 +40,8 @@ out/
 .DS_Store # 앞으로 추적되지 않도록
 
 
+/build/generated/
 postgres-data/
-
 .idea/modules.xml
+
+

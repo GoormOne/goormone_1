@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: sample-project
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/sample
+    driver-class-name: org.postgresql.Driver
+    username: user
+    password: password
+
+  jpa:
+    hibernate:
+      ddl-auto: update  # Hibernate가 테이블 생성 안 하도록 설정
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        highlight_sql: true
+
+  sql:
+    init:
+      mode: never
+      schema-locations: classpath:schema.sql  # 테이블 생성 쿼리
+      data-locations: classpath:data.sql      # 초기 데이터 삽입
+
+  jackson:
+    time-zone: Asia/Seoul
+    serialization:
+      write-dates-as-timestamps: false
