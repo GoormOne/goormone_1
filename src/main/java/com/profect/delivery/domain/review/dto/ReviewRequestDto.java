@@ -14,4 +14,3 @@ public class ReviewRequestDto {
     private Boolean isPublic;
 }
 // private String userName; // NOT NULL
-

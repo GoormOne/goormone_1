@@ -74,7 +74,7 @@ public class ReviewController {
 //        }
 //    }
 
-
+    // 리뷰 삭제
     @DeleteMapping("/{storeId}")
     public ResponseEntity<ApiResponse<String>> deleteReview(
             @PathVariable UUID storeId,

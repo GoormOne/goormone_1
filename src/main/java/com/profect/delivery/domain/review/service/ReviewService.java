@@ -67,6 +67,7 @@ public class ReviewService {
                 .build();
     }
 
+    // 리뷰 한개 조회
     @Transactional(readOnly = true)
     public ReviewResponseDto getReviewByStoreIdAndReviewId(UUID storeId, UUID reviewId) {
         Review review = reviewRepository.findByStoreIdAndReviewId(storeId, reviewId)
