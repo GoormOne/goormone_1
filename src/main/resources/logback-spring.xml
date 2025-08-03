@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- 로그 출력 형식 설정 -->
+    <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
+
+    <!-- 로그 저장 디렉토리 지정 -->
+    <property name="LOG_DIR" value="logs"/>
+
+    <!-- 콘솔에 출력되는 로그 (개발 중 확인용) -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 파일에 저장되는 로그 -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 저장할 로그 파일 경로 -->
+        <file>${LOG_DIR}/iluDev.log</file>
+
+        <!-- 날짜별로 로그 파일 분리 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 로그 파일 이름 패턴 (날짜별 분리) -->
+            <fileNamePattern>${LOG_DIR}/iluDev.%d{yyyy-MM-dd}.log</fileNamePattern>
+
+            <!-- 로그 보관 기간 (며칠치 로그를 유지할지) -->
+            <maxHistory>30</maxHistory>
+
+            <!-- 로그 파일 하나당 최대 용량 설정 (선택 사항) -->
+            <!-- <maxFileSize>10MB</maxFileSize> -->
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 루트 로그 설정 (전역 기본 로그 레벨 지정) -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FILE" />
+    </root>
+
+</configuration>
