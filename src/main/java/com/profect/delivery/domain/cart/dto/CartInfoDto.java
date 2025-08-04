@@ -1,4 +1,4 @@
-package com.profect.delivery.domain.cart.DTO;
+package com.profect.delivery.domain.cart.dto;
 
 
 import lombok.AllArgsConstructor;

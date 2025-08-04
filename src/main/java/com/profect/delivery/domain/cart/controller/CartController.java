@@ -3,8 +3,8 @@ package com.profect.delivery.domain.cart.controller;
 import com.profect.delivery.domain.cart.repository.CartItemRepository;
 import com.profect.delivery.domain.cart.repository.CartRepository;
 import com.profect.delivery.domain.cart.service.CartService;
-import com.profect.delivery.domain.cart.DTO.AddCartDto;
-import com.profect.delivery.domain.cart.DTO.CartInfoDto;
+import com.profect.delivery.domain.cart.dto.AddCartDto;
+import com.profect.delivery.domain.cart.dto.CartInfoDto;
 import com.profect.delivery.global.dto.ApiResponse;
 import com.profect.delivery.global.entity.Cart;
 

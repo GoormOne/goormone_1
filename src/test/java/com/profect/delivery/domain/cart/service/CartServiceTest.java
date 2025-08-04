@@ -1,6 +1,6 @@
 package com.profect.delivery.domain.cart.service;
 
-import com.profect.delivery.domain.cart.DTO.AddCartDto;
+import com.profect.delivery.domain.cart.dto.AddCartDto;
 import com.profect.delivery.domain.cart.repository.CartRepository;
 import com.profect.delivery.global.entity.Cart;
 import com.profect.delivery.global.exception.InvalidUuidFormatException;
