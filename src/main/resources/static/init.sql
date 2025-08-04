@@ -32,11 +32,11 @@ CREATE TABLE "p_users" (
   "role" role_type NOT NULL,
   "is_public" boolean NOT NULL,
   "is_banned" boolean NOT NULL,
-  "created_at" timestamp NOT NULL,
+  "created_at" timestamp(0) NOT NULL,
   "created_by" varchar(10) NOT NULL,
-  "updated_at" timestamp,
+  "updated_at" timestamp(0),
   "updated_by" varchar(10),
-  "deleted_at" timestamp,
+  "deleted_at" timestamp(0),
   "deleted_by" varchar(10),
   "deleted_rs" varchar(100)
 );
@@ -51,9 +51,9 @@ CREATE TABLE "p_customer_address" (
   "user_latitude" decimal(10,6) NOT NULL,
   "user_longitude" decimal(10,6) NOT NULL,
   "is_default" boolean NOT NULL,
-  "created_at" timestamp NOT NULL,
-  "updated_at" timestamp,
-  "deleted_at" timestamp
+  "created_at" timestamp(0) NOT NULL,
+  "updated_at" timestamp(0),
+  "deleted_at" timestamp(0)
 );
 
 CREATE TABLE "p_regions" (
@@ -61,9 +61,9 @@ CREATE TABLE "p_regions" (
   "region_1depth_name" varchar(50) NOT NULL,
   "region_2depth_name" varchar(50) NOT NULL,
   "region_3depth_name" varchar(50) NOT NULL,
-  "created_at" timestamp NOT NULL,
-  "updated_at" timestamp,
-  "deleted_at" timestamp
+  "created_at" timestamp(0) NOT NULL,
+  "updated_at" timestamp(0),
+  "deleted_at" timestamp(0)
 );
 
 CREATE TABLE "p_stores_category" (
@@ -86,11 +86,11 @@ CREATE TABLE "p_stores" (
     open_time           TIME NOT NULL,
     close_time          TIME NOT NULL,
     is_banned           BOOLEAN NOT NULL,
-    created_at          TIMESTAMP NOT NULL,
+    created_at          TIMESTAMP(0) NOT NULL,
     created_by          VARCHAR(10) NOT NULL,
-    updated_at          TIMESTAMP,
+    updated_at          TIMESTAMP(0),
     updated_by          VARCHAR(10),
-    deleted_at          TIMESTAMP,
+    deleted_at          TIMESTAMP(0),
     deleted_by          VARCHAR(10),
     deleted_rs          VARCHAR(100)
 );
@@ -98,24 +98,24 @@ CREATE TABLE "p_stores" (
 CREATE TABLE "p_stores_regions" (
   "store_id" uuid NOT NULL,
   "region_id" uuid NOT NULL,
-  "created_at" timestamp NOT NULL
+  "created_at" timestamp(0) NOT NULL
 );
 
-CREATE TABLE "p_stores_business_hr" (
-  "business_hr_id" uuid NOT NULL PRIMARY KEY,
-  "store_id" uuid NOT NULL,
-  "day_of_week" varchar(3) NOT NULL,
-  "open_time" time NOT NULL,
-  "close_time" time NOT NULL
-);
+-- CREATE TABLE "p_stores_business_hr" (
+--   "business_hr_id" uuid NOT NULL PRIMARY KEY,
+--   "store_id" uuid NOT NULL,
+--   "day_of_week" varchar(3) NOT NULL,
+--   "open_time" time NOT NULL,
+--   "close_time" time NOT NULL
+-- );
 
 CREATE TABLE "p_menu_category" (
   "menu_category_id" uuid NOT NULL PRIMARY KEY,
   "store_id" uuid NOT NULL,
   "menu_category_name" varchar(20) NOT NULL,
-  "created_at" timestamp NOT NULL,
-  "updated_at" timestamp,
-  "deleted_at" timestamp
+  "created_at" timestamp(0) NOT NULL,
+  "updated_at" timestamp(0),
+  "deleted_at" timestamp(0)
 );
 
 CREATE TABLE "p_menus" (
@@ -126,36 +126,38 @@ CREATE TABLE "p_menus" (
   "menu_price" int NOT NULL,
   "menu_description" text NOT NULL,
   "is_public" boolean NOT NULL,
-  "created_at" timestamp NOT NULL,
+  "menu_photo_url" varchar(100),
+  "is_public_photo" boolean,
+  "created_at" timestamp(0) NOT NULL,
   "created_by" varchar(10) NOT NULL,
-  "updated_at" timestamp,
+  "updated_at" timestamp(0),
   "updated_by" varchar(10),
-  "deleted_at" timestamp,
+  "deleted_at" timestamp(0),
   "deleted_by" varchar(10),
   "deleted_rs" varchar(100)
 );
 
-CREATE TABLE "p_menu_photos" (
-  "menu_photo_id" uuid NOT NULL PRIMARY KEY,
-  "menu_id" uuid NOT NULL,
-  "menu_photo_url" varchar(100) NOT NULL,
-  "is_public" boolean NOT NULL,
-  "created_at" timestamp NOT NULL,
-  "created_by" varchar(10) NOT NULL,
-  "updated_at" timestamp,
-  "updated_by" varchar(10),
-  "deleted_at" timestamp,
-  "deleted_by" varchar(10),
-  "deleted_rs" varchar(100)
-);
+-- CREATE TABLE "p_menu_photos" (
+--   "menu_photo_id" uuid NOT NULL PRIMARY KEY,
+--   "menu_id" uuid NOT NULL,
+--   "menu_photo_url" varchar(100) NOT NULL,
+--   "is_public" boolean NOT NULL,
+--   "created_at" timestamp NOT NULL,
+--   "created_by" varchar(10) NOT NULL,
+--   "updated_at" timestamp,
+--   "updated_by" varchar(10),
+--   "deleted_at" timestamp,
+--   "deleted_by" varchar(10),
+--   "deleted_rs" varchar(100)
+-- );
 
 CREATE TABLE "p_carts" (
   "cart_id" uuid NOT NULL PRIMARY KEY,
   "store_id" uuid NOT NULL,
   "user_id" varchar(10) NOT NULL,
   "cart_status" cart_status NOT NULL,
-  "created_at" timestamp NOT NULL,
-  "updated_at" timestamp,
+  "created_at" timestamp(0) NOT NULL,
+  "updated_at" timestamp(0),
   "updated_by" varchar(10)
 );
 
@@ -164,8 +166,8 @@ CREATE TABLE "p_cart_items" (
   "cart_id" uuid NOT NULL,
   "menu_id" uuid NOT NULL,
   "quantity" int NOT NULL,
-  "created_at" timestamp NOT NULL,
-  "updated_at" timestamp,
+  "created_at" timestamp(0) NOT NULL,
+  "updated_at" timestamp(0),
   "updated_by" varchar(10)
 );
 
@@ -173,13 +175,13 @@ CREATE TABLE "p_orders" (
   "order_id" uuid NOT NULL PRIMARY KEY,
   "user_id" varchar(10) NOT NULL,
   "store_id" uuid NOT NULL,
-  "loc_cd" uuid NOT NULL,
+  "address_cd" uuid NOT NULL,
   "cart_id" uuid NOT NULL,
   "total_price" int NOT NULL,
   "request_message" text,
-  "created_at" timestamp NOT NULL,
+  "created_at" timestamp(0) NOT NULL,
   "created_by" varchar(10) NOT NULL,
-  "deleted_at" timestamp,
+  "deleted_at" timestamp(0),
   "deleted_by" varchar(10),
   "deleted_rs" varchar(100)
 );
@@ -189,8 +191,8 @@ CREATE TABLE "p_order_items" (
   "order_id" uuid NOT NULL,
   "menu_id" uuid NOT NULL,
   "quantity" int NOT NULL,
-  "created_at" timestamp NOT NULL,
-  "updated_at" timestamp,
+  "created_at" timestamp(0) NOT NULL,
+  "updated_at" timestamp(0),
   "updated_by" varchar(10)
 );
 
@@ -201,20 +203,23 @@ CREATE TABLE "p_reviews" (
   "rating" smallint NOT NULL,
   "comment" text,
   "is_public" boolean NOT NULL,
-  "created_at" timestamp NOT NULL,
+  "created_at" timestamp(0) NOT NULL,
   "created_by" varchar(10) NOT NULL
 );
 
 CREATE TABLE "p_review_summary" (
   "batch_id" uuid NOT NULL PRIMARY KEY,
   "store_id" uuid NOT NULL,
-  "period_start" date NOT NULL,
-  "period_end" date NOT NULL,
-  "review_cnt" smallint NOT NULL,
-  "avg_rating" decimal(3,2) NOT NULL,
+  "summary_refresh_date" date NOT NULL,
   "summary_text" text NOT NULL,
-  "created_at" timestamp NOT NULL,
+  "created_at" timestamp(0) NOT NULL,
   "created_by" varchar(10) NOT NULL
+);
+
+CREATE TABLE "p_review_average" (
+    "store_id" uuid NOT NULL PRIMARY KEY,
+    "count" int,
+    "total" int
 );
 
 CREATE TABLE "p_payments" (
@@ -225,7 +230,7 @@ CREATE TABLE "p_payments" (
   "payment_method" payment_method NOT NULL,
   "card_number" varchar(16) NOT NULL,
   "payment_amount" int NOT NULL,
-  "payment_time" timestamp NOT NULL,
+  "payment_time" timestamp(0) NOT NULL,
   "payment_result" payment_result NOT NULL,
   "failure_reason" text
 );
@@ -239,7 +244,7 @@ CREATE TABLE "p_errors" (
   "error_message" text NOT NULL,
   "client_ip" varchar(45) NOT NULL,
   "user_agent" text NOT NULL,
-  "created_at" timestamp NOT NULL
+  "created_at" timestamp(0) NOT NULL
 );
 
 COMMENT ON TABLE "p_stores_regions" IS '교차 테이블';
@@ -254,15 +259,11 @@ ALTER TABLE "p_stores_regions" ADD FOREIGN KEY ("store_id") REFERENCES "p_stores
 
 ALTER TABLE "p_stores_regions" ADD FOREIGN KEY ("region_id") REFERENCES "p_regions" ("region_id");
 
-ALTER TABLE "p_stores_business_hr" ADD FOREIGN KEY ("store_id") REFERENCES "p_stores" ("store_id");
-
 ALTER TABLE "p_menu_category" ADD FOREIGN KEY ("store_id") REFERENCES "p_stores" ("store_id");
 
 ALTER TABLE "p_menus" ADD FOREIGN KEY ("store_id") REFERENCES "p_stores" ("store_id");
 
 ALTER TABLE "p_menus" ADD FOREIGN KEY ("menu_category_id") REFERENCES "p_menu_category" ("menu_category_id");
-
-ALTER TABLE "p_menu_photos" ADD FOREIGN KEY ("menu_id") REFERENCES "p_menus" ("menu_id");
 
 ALTER TABLE "p_carts" ADD FOREIGN KEY ("store_id") REFERENCES "p_stores" ("store_id");
 
@@ -276,7 +277,7 @@ ALTER TABLE "p_orders" ADD FOREIGN KEY ("user_id") REFERENCES "p_users" ("user_i
 
 ALTER TABLE "p_orders" ADD FOREIGN KEY ("store_id") REFERENCES "p_stores" ("store_id");
 
-ALTER TABLE "p_orders" ADD FOREIGN KEY ("loc_cd") REFERENCES "p_customer_address" ("address_cd");
+ALTER TABLE "p_orders" ADD FOREIGN KEY ("address_cd") REFERENCES "p_customer_address" ("address_cd");
 
 ALTER TABLE "p_orders" ADD FOREIGN KEY ("cart_id") REFERENCES "p_carts" ("cart_id");
 
