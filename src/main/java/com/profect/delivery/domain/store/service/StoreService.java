@@ -234,16 +234,30 @@ public class StoreService {
     }
 
     public List<StoreSearchDto> searchStoreByKeyword(String keyword) {
-        List<Store> stores = storeRepository.searchStoresByKeyword(keyword);
 
+        System.out.println("🔍 keyword = " + keyword);
+        List<UUID> nameMatchedIds = storeRepository.findStoreIdsByName(keyword);
+        List<UUID> menuMatchedIds = storeRepository.findStoreIdsByMenu(keyword);
 
-        return stores.stream().map(store -> new StoreSearchDto(
-                store.getStoreId().toString(),
-                store.getStoreName(),
-                store.getStoreDescription(),
-                calculateAverageRating(store.getStoreId()),
-                isStoreOpen(store)
-        )).collect(Collectors.toList());
+        Set<UUID> storeIdSet = new HashSet<>();
+        storeIdSet.addAll(nameMatchedIds);
+        storeIdSet.addAll(menuMatchedIds);
+
+        if (storeIdSet.isEmpty()) {
+            throw new BusinessException(BusinessErrorCode.EMPTY_SEARCH_RESULT);
+        }
+
+        List<Store> stores = storeRepository.findByStoreIdIn(new ArrayList<>(storeIdSet));
+
+        return stores.stream()
+                .map(store -> new StoreSearchDto(
+                        store.getStoreId().toString(),
+                        store.getStoreName(),
+                        store.getStoreDescription(),
+                        calculateAverageRating(store.getStoreId()),
+                        isStoreOpen(store)
+                ))
+                .collect(Collectors.toList());
     }
 
 

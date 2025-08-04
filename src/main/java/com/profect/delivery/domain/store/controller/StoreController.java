@@ -59,8 +59,8 @@ public class StoreController {
             HttpServletRequest request
     ) {
 
-            storeService.findStoreById(storeId);
-            return ResponseEntity.ok(ApiResponse.success());
+            StoreDto dto = storeService.findStoreById(storeId);
+        return ResponseEntity.ok(ApiResponse.success(dto));
 
     }
 
@@ -94,7 +94,7 @@ public class StoreController {
 
     @GetMapping("/search/categoryName")
     public ResponseEntity<ApiResponse<List<StoreSearchDto>>> searchStoreByKeyword(
-            @RequestParam(defaultValue = "") String categoryName
+            @RequestParam(name = "categoryName", defaultValue = "") String categoryName
     ) {
         List<StoreSearchDto> result = storeService.searchStoreByKeyword(categoryName);
         return ResponseEntity.ok().body(ApiResponse.success(result));

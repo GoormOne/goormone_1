@@ -6,12 +6,12 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
-public enum UserErrorCode implements DefaultErrorCode {
+public enum MenuErrorCode  implements DefaultErrorCode{
 
-    //404 NOT FOUND
-    NOT_FOUND_USER(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다."),
-    NOT_FOUND_ADDRESS(HttpStatus.NOT_FOUND, "주소를 찾을 수 없습니다.")
+    NOT_FOUND_MENU(HttpStatus.NOT_FOUND, "해당 메뉴를 찾을 수 없습니다."),
+
     ;
+
 
     private HttpStatus httpStatus;
     private String message;
