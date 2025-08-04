@@ -83,9 +83,40 @@ INSERT INTO p_order_items (order_item_id, order_id, menu_id, quantity, created_a
 SELECT gen_random_uuid(), o.order_id, m.menu_id, 2, now()
 FROM p_orders o, p_menus m LIMIT 2;
 
--- INSERT INTO p_reviews
+-- -- INSERT INTO p_reviews
+-- INSERT INTO p_reviews (review_id, store_id, user_id, rating, comment, is_public, created_at, created_by)
+-- SELECT gen_random_uuid(), store_id, 'user001', 5, '맛있어요', true, now(), 'user001' FROM p_stores LIMIT 2;
+
+
+-- user001의 리뷰 21개 (rating: 1~5 랜덤, comment: 다양하게) 생성
 INSERT INTO p_reviews (review_id, store_id, user_id, rating, comment, is_public, created_at, created_by)
-SELECT gen_random_uuid(), store_id, 'user001', 5, '맛있어요', true, now(), 'user001' FROM p_stores LIMIT 2;
+SELECT gen_random_uuid(), s.store_id, 'user001',
+       floor(random() * 5 + 1)::int,
+       c.comment,
+       true, now(), 'user001'
+FROM (
+         SELECT unnest(ARRAY[
+             '매장이 깔끔해요', '친절해요', '음식이 맛있어요', '재방문하고 싶어요',
+             '포장이 정갈했어요', '매장이 시끄러웠어요', '배달이 느렸어요',
+             '사장님이 친절했어요', '양이 많아요', '다양한 메뉴가 있어요',
+             '음식이 식어서 왔어요', '맛이 별로였어요', '분위기가 좋아요',
+             '친구랑 가기 좋아요', '혼밥하기 괜찮아요', '음식이 너무 짜요',
+             '적당한 가격이에요', '너무 비싸요', '매장이 너무 작아요',
+             '재료가 신선해요', '위생이 좋아요'
+             ]) AS comment
+     ) c
+         CROSS JOIN (SELECT store_id FROM p_stores LIMIT 3) s;
+
+
+-- user002의 리뷰 2개 생성
+INSERT INTO p_reviews (review_id, store_id, user_id, rating, comment, is_public, created_at, created_by)
+SELECT gen_random_uuid(), store_id, 'user002',
+       floor(random() * 5 + 1)::int,
+       unnest(ARRAY['보통이에요', '아쉬웠어요']) AS comment,
+       true, now(), 'user002'
+FROM p_stores
+LIMIT 1;
+
 
 -- INSERT INTO p_review_summary
 INSERT INTO p_review_summary (batch_id, store_id, period_start, period_end, review_cnt, avg_rating, summary_text, created_at, created_by)
