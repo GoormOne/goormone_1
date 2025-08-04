@@ -1,6 +1,7 @@
 package com.profect.delivery.domain.cart.service;
 
 import com.profect.delivery.domain.cart.dto.AddCartDto;
+import com.profect.delivery.domain.cart.repository.CartItemRepository;
 import com.profect.delivery.domain.cart.repository.CartRepository;
 import com.profect.delivery.global.entity.Cart;
 import com.profect.delivery.global.exception.InvalidUuidFormatException;
@@ -41,12 +42,14 @@ import static org.mockito.Mockito.*;
 
 class CartServiceTest {
     private CartRepository cartRepository;
+    private CartItemRepository cartItemRepository;
     private CartService cartService;
 
     @BeforeEach
-    void setUp() {
+    void setUp() {  // 생성자 주입
         cartRepository = mock(CartRepository.class);
-        cartService = mock(CartService.class);  // 생성자 주입
+        cartService = mock(CartService.class);
+        cartItemRepository = mock(CartItemRepository.class);
     }
 
     @Test
@@ -113,6 +116,36 @@ class CartServiceTest {
         assertThrows(InvalidUuidFormatException.class, () -> {
             cartService.saveCart(cartDtoList, userId, invalidStoreId);
         });
+    }
+
+    @Test
+    void deleteCartByCartId_존재할때_삭제성공() {
+        // given
+        UUID cartId = UUID.randomUUID();
+        when(cartItemRepository.existsById(cartId)).thenReturn(true);
+
+        // when
+        boolean result = cartService.deleteCartByCartId(cartId);
+
+        // then
+        assertTrue(result);
+        verify(cartItemRepository).deleteById(cartId);
+        verify(cartRepository).deleteById(cartId);
+    }
+
+    @Test
+    void deleteCartByCartId_존재하지않을때_삭제실패() {
+        // given
+        UUID cartId = UUID.randomUUID();
+        when(cartItemRepository.existsById(cartId)).thenReturn(false);
+
+        // when
+        boolean result = cartService.deleteCartByCartId(cartId);
+
+        // then
+        assertFalse(result);
+        verify(cartItemRepository, never()).deleteById(any());
+        verify(cartRepository, never()).deleteById(any());
     }
 
     @Test

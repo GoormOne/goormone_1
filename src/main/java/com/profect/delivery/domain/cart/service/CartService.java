@@ -11,10 +11,12 @@ import com.profect.delivery.global.entity.CartItem;
 import com.profect.delivery.global.exception.InvalidUuidFormatException;
 import com.profect.delivery.global.exception.NotFoundException;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -96,4 +98,51 @@ public class CartService {
     }
 
 
+    public boolean deleteCartByCartId(UUID cartUuid) {
+        if (cartItemRepository.existsById(cartUuid)) {
+
+            cartItemRepository.deleteByCart((new Cart(cartUuid)));
+            cartRepository.deleteById(cartUuid);
+            return true;
+        } else {
+            log.warn("삭제 실패 - 존재하지 않음: {}", cartUuid);
+            return false;
+        }
+
+    }
+
+
+    public List<CartItem> saveCartItems(List<CartItem> cartItems) {
+
+        return cartItemRepository.saveAll(cartItems);
+
+    }
+
+    public boolean deleteCartItemById(String cartItemId) {
+        UUID cartItemUuid = UUID.fromString(cartItemId);
+
+        if (cartItemRepository.existsById(cartItemUuid)){
+            cartItemRepository.deleteById(cartItemUuid);
+            return true;
+        }else{
+            log.warn("삭제 실패 - 카트 아이템 존재하지 않음: {}", cartItemUuid);
+            return false;
+        }
+
+    }
+
+    @Transactional
+    public void updateCartItem(UUID cartItemId, List<AddCartDto> addCartList) {
+        CartItem cartItem = cartItemRepository.findById(cartItemId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 CartItem이 존재하지 않습니다."));
+
+        // 예시: 첫 번째 AddCartDto로만 수정 (단일 아이템 수정 기준)
+        AddCartDto dto = addCartList.get(0);
+        cartItem.setMenuId(UUID.fromString(dto.getMenuId()));
+        cartItem.setQuantity(Integer.parseInt(dto.getQuantity()));
+        cartItem.setUpdatedAt(LocalDateTime.now());
+        cartItem.setUpdatedBy("user001"); // 유저아이디 넣기
+
+        // JPA는 영속 상태라 save 호출 없이도 트랜잭션 끝나면 자동 반영됨
+    }
 }
