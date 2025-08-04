@@ -16,6 +16,7 @@ import java.util.Date;
 @Entity
 @Table(name = "p_users") // 클래스명과 테이블명이 다를 경우를 대비해 @Table 어노테이션을 사용하는 것이 좋습니다.
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {

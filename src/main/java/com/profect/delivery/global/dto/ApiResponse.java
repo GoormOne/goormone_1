@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 public class ApiResponse<T> {
     @JsonProperty("isSuccess")
     private boolean isSuccess;
-
     private T data;
     private ErrorResponse error;
 

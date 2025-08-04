@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 
         @GetMapping
         public ResponseEntity<ApiResponse<UserResponseDto>> getUser() {
-            String currentUserId = "U000000001";//인증인가 가져오면 유저 id 추출
+            String currentUserId = "U000000000";//인증인가 가져오면 유저 id 추출
 
             return userService.getUserById(currentUserId)
                     .map(UserResponseDto::fromEntity) // Entity를 DTO로 변환
@@ -53,7 +53,7 @@ import java.util.stream.Collectors;
 
         @GetMapping("/addresses")
         public ResponseEntity<ApiResponse<List<UserAddressesResponseDto>>> getUserAddresses() {
-            String currentUserId = "U000000001";
+            String currentUserId = "U000000011";
 
             List<UserAddressesResponseDto> addresses = userAddressService.findByUserId(currentUserId).stream()
                     .map(UserAddressesResponseDto::fromEntity) // 각 엔티티를 DTO로 변환
