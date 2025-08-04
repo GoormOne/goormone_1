@@ -34,9 +34,6 @@ public class ReviewSummary {
     @Column(name = "review_cnt", nullable = false)
     private Short reviewCount;
 
-    @Column(name = "avg_rating", nullable = false)
-    private Double avgRating;
-
     @Column(name = "summary_text")
     private String summaryText;
 
