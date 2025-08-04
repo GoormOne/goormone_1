@@ -115,10 +115,10 @@ public class MenuService {
                                                      Role role) {
         boolean publicOnly = (role == Role.CUSTOMER);
         Page<Menu> menuPage = menuRepository.searchMenus(storeId, categoryId, publicOnly, pageable);
-        
+
         Map<UUID, List<Menu>> menusByCategory = menuPage.getContent().stream()
                 .collect(Collectors.groupingBy(menu -> menu.getMenuCategory().getMenuCategoryId()));
-        
+
         List<MenuCategoryResponse> categories = menusByCategory.entrySet().stream()
                 .map(entry -> {
                     Menu firstMenu = entry.getValue().get(0);
@@ -131,7 +131,7 @@ public class MenuService {
                     );
                 })
                 .toList();
-        
+
         return new MenuCategoriesResponse(categories, menuPage.getTotalElements(), menuPage.getTotalPages());
     }
 
@@ -139,7 +139,7 @@ public class MenuService {
     public MenuDetailResponse getMenuDetail(UUID storeId, UUID menuId) {
         Menu menu = menuRepository.findByStoreStoreIdAndMenuId(storeId, menuId)
                 .orElseThrow(() -> new NotFoundException("MENU NOT FOUND"));
-        
+
         return MenuDetailResponse.from(menu);
     }
 

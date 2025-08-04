@@ -7,7 +7,6 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-
 @Entity
 @Table(name = "p_carts")
 @Getter
@@ -15,6 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString(exclude = "cartItems")
 public class Cart {
 
     @Id
@@ -48,4 +48,10 @@ public class Cart {
     public enum CartStatus {
         ACTIVE, ORDERED, ABANDONED
     }
+
+    @PrePersist
+    public void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
+
 }
