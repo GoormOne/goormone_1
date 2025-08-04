@@ -1,4 +1,4 @@
-package com.profect.delivery.domain.menu.dto;
+package com.profect.delivery.domain.menu.dto.request;
 
 import jakarta.validation.constraints.Positive;
 

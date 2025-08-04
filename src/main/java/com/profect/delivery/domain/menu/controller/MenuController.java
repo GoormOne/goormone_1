@@ -1,10 +1,10 @@
 package com.profect.delivery.domain.menu.controller;
 
 import com.profect.delivery.global.dto.ApiResponse;
-import com.profect.delivery.domain.menu.dto.CreateMenuRequest;
-import com.profect.delivery.domain.menu.dto.CreateMenuResponse;
-import com.profect.delivery.domain.menu.dto.UpdateMenuRequest;
-import com.profect.delivery.domain.menu.dto.UpdateMenuResponse;
+import com.profect.delivery.domain.menu.dto.request.CreateMenuRequest;
+import com.profect.delivery.domain.menu.dto.response.CreateMenuResponse;
+import com.profect.delivery.domain.menu.dto.request.UpdateMenuRequest;
+import com.profect.delivery.domain.menu.dto.response.UpdateMenuResponse;
 import com.profect.delivery.domain.menu.service.MenuService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

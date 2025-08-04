@@ -1,4 +1,4 @@
-package com.profect.delivery.domain.menu.dto;
+package com.profect.delivery.domain.menu.dto.response;
 
 import java.util.UUID;
 
