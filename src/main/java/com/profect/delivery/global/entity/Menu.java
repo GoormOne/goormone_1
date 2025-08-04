@@ -41,6 +41,12 @@ public class Menu {
     @Column(name = "is_public", nullable = false)
     private boolean isPublic;
 
+    @Column(name = "menu_photo_url", length = 100)
+    private String menuPhotoUrl;
+
+    @Column(name = "is_public_photo")
+    private Boolean isPublicPhoto;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
     @Column(nullable = false, length = 10)
@@ -60,6 +66,8 @@ public class Menu {
     public void changeCategory(MenuCategory category) { this.menuCategory = category; }
     public void changeDescription(String description) { this.menuDescription = description; }
     public void changeIsPublic(Boolean isPublic)      { this.isPublic = isPublic; }
+    public void changeMenuPhotoUrl(String menuPhotoUrl) { this.menuPhotoUrl = menuPhotoUrl; }
+    public void changeIsPublicPhoto(Boolean isPublicPhoto) { this.isPublicPhoto = isPublicPhoto; }
 
     public void auditUpdate(String username) {
         this.updatedAt = LocalDateTime.now();
