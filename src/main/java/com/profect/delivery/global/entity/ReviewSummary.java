@@ -31,9 +31,6 @@ public class ReviewSummary {
     @Column(name = "period_end", nullable = false)
     private LocalDate periodEnd;
 
-    @Column(name = "review_cnt", nullable = false)
-    private Short reviewCount;
-
     @Column(name = "summary_text")
     private String summaryText;
 
