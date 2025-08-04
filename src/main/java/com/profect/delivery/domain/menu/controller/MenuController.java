@@ -1,13 +1,19 @@
 package com.profect.delivery.domain.menu.controller;
 
+import com.profect.delivery.domain.menu.dto.response.MenuDetailResponse;
+import com.profect.delivery.domain.menu.dto.response.MenuCategoriesResponse;
 import com.profect.delivery.global.dto.ApiResponse;
-import com.profect.delivery.domain.menu.dto.CreateMenuRequest;
-import com.profect.delivery.domain.menu.dto.CreateMenuResponse;
-import com.profect.delivery.domain.menu.dto.UpdateMenuRequest;
-import com.profect.delivery.domain.menu.dto.UpdateMenuResponse;
+import com.profect.delivery.domain.menu.dto.request.CreateMenuRequest;
+import com.profect.delivery.domain.menu.dto.response.CreateMenuResponse;
+import com.profect.delivery.domain.menu.dto.request.UpdateMenuRequest;
+import com.profect.delivery.domain.menu.dto.response.UpdateMenuResponse;
 import com.profect.delivery.domain.menu.service.MenuService;
+import com.profect.delivery.global.entity.Role;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -122,4 +128,23 @@ public class MenuController {
         return ResponseEntity.noContent().build(); // 204 No Content
     }
 
+    @GetMapping
+    public ResponseEntity<ApiResponse<MenuCategoriesResponse>> listMenu(
+            @PathVariable UUID storeId,
+            @RequestParam(required = false) UUID menuCategoryId,
+            @PageableDefault(size = 20) Pageable pageable,
+            @RequestHeader("role") Role role) {
+
+        MenuCategoriesResponse response = menuService.listMenusByCategory(storeId, menuCategoryId, pageable, role);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    @GetMapping("/{menuId}")
+    public ResponseEntity<ApiResponse<MenuDetailResponse>> getMenuDetail(
+            @PathVariable UUID storeId,
+            @PathVariable UUID menuId) {
+
+        MenuDetailResponse response = menuService.getMenuDetail(storeId, menuId);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
 }
