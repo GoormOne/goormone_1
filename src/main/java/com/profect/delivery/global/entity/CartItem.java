@@ -13,7 +13,14 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 public class CartItem {
+
+    public CartItem(UUID menuId, int quantity, Cart cart){
+        this.menuId = menuId;
+        this.quantity = quantity;
+        this.cart = cart;
+    }
 
     @Id
     @GeneratedValue
@@ -39,8 +46,11 @@ public class CartItem {
     @Column(name = "updated_by", length = 10)
     private String updatedBy;
 
-    // 수량 체크는 DB에서 제약 조건 추가하는 걸 추천함
     @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
+
     @PreUpdate
     private void validateQuantity() {
         if (quantity < 1 || quantity > 999) {
