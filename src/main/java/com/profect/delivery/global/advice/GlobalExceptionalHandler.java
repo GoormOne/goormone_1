@@ -105,8 +105,14 @@ public class GlobalExceptionalHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<?>> handleAllUncaughtException(Exception e,
                                                                      HttpServletRequest request) {
-        ErrorResponse err = ErrorResponse.of(50000, "서버 내부 오류가 발생했습니다.", request.getRequestURI());
-        saveErrorLog(e, request, 50000);
+
+        // Swagger 요청이면 예외를 다시 던져 Spring 기본 처리로 넘김
+        String path = request.getRequestURI();
+        if (path.contains("/v3/api-docs") || path.contains("/swagger-ui")) {
+            throw new RuntimeException(e);
+        }
+
+        ErrorResponse err = ErrorResponse.of(50000, "서버 내부 오류가 발생했습니다.", path);
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ApiResponse.failure(err));
