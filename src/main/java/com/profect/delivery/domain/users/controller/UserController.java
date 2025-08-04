@@ -4,8 +4,10 @@ import com.profect.delivery.domain.users.dto.*;
 import com.profect.delivery.domain.users.service.UserAddressService;
 import com.profect.delivery.domain.users.service.UserService;
 import com.profect.delivery.global.dto.ApiResponse;
+import com.profect.delivery.global.exception.BusinessException;
 import com.profect.delivery.global.exception.UserAddressNotFoundException;
 import com.profect.delivery.global.exception.UserNotFoundException;
+import com.profect.delivery.global.exception.custom.UserErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +34,9 @@ import java.util.stream.Collectors;
                     .map(UserResponseDto::fromEntity) // Entity를 DTO로 변환
                     .map(ApiResponse::success)        // 성공 응답으로 래핑
                     .map(response -> new ResponseEntity<>(response, HttpStatus.OK)) // ResponseEntity 반환
-                    .orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다.")); // 사용자 없을 시 예외 발생
+//                    .orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다."));
+                    .orElseThrow(() -> new BusinessException(UserErrorCode.NOT_FOUND_USER));
+
         }
 
 

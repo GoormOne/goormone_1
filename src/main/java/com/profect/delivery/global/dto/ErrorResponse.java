@@ -17,11 +17,11 @@ public class ErrorResponse {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime timestamp;
 
-    public static ErrorResponse of(int code, String message, String path) {
+    // ErrorResponse.java
+    public static ErrorResponse of(int code, String message) {
         return ErrorResponse.builder()
                 .code(code)
                 .message(message)
-                .path(path)
                 .timestamp(LocalDateTime.now())
                 .build();
     }
