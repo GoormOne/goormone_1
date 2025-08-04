@@ -8,6 +8,7 @@ spring:
     username: user
     password: password
 
+
   jpa:
     hibernate:
       ddl-auto: create  # Hibernate가 테이블 생성 안 하도록 설정

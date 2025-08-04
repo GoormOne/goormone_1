@@ -16,14 +16,13 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> { //<이 r
 
     // 특정 리뷰 존재 여부
     boolean existsByStoreIdAndReviewId(UUID storeId, UUID reviewId);
-//    // 리뷰 삭제
+    // 리뷰 삭제
 //    void deleteByStoreIdAndReviewId(UUID storeId, UUID reviewId);
 
     // 특정 리뷰 조회, 리뷰 수정
     Optional<Review> findByStoreIdAndReviewId(UUID storeId, UUID reviewId);
 
     // soft delete용
-
     // 공개된 리뷰만 가져오기 (리스트 조회에서 사용)
     List<Review> findAllByStoreIdAndIsPublicTrue(UUID storeId);
 
