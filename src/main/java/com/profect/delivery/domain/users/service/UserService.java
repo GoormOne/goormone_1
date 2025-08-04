@@ -27,15 +27,15 @@ public class UserService{//비즈니스 로직
 
 
     public void updateUser(UserUpdateRequestDto userUpdateRequestDto, String UserId, String UpdatedBy) {
-       User user=userRepository.findByUserId(UserId).orElseThrow(() -> new UserNotFoundException("User not found"));
-       user.update(userUpdateRequestDto.getName(),
-               userUpdateRequestDto.getPassword(),
-               userUpdateRequestDto.getEmail(),
-               userUpdateRequestDto.getIs_public(),
-               UpdatedBy
-               );
-       userRepository.save(user);
-       log.info("Updated user id {}",user);
+        User user=userRepository.findByUserId(UserId).orElseThrow(() -> new UserNotFoundException("User not found"));
+        user.update(userUpdateRequestDto.getName(),
+                userUpdateRequestDto.getPassword(),
+                userUpdateRequestDto.getEmail(),
+                userUpdateRequestDto.getIs_public(),
+                UpdatedBy
+        );
+        userRepository.save(user);
+        log.info("Updated user id {}",user);
 
     }
 

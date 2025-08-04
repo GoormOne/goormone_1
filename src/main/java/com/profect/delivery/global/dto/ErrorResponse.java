@@ -13,7 +13,7 @@ public class ErrorResponse {
     private int code;           // 커스텀 에러 코드
     private String message;     // 사용자용 에러 메세지
     private String path;        // 요청 URI
-//    private String timestamp;   // 에러 발생 지점
+    //    private String timestamp;   // 에러 발생 지점
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime timestamp;
 

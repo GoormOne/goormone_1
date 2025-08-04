@@ -10,7 +10,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: none  # Hibernate가 테이블 생성 안 하도록 설정
+      ddl-auto: create  # Hibernate가 테이블 생성 안 하도록 설정
     show-sql: true
     properties:
       hibernate:

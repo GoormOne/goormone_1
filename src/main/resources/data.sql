@@ -48,7 +48,7 @@ INSERT INTO p_stores (
 INSERT INTO p_stores_regions (store_id, region_id, created_at)
 SELECT s.store_id, r.region_id, now()
 FROM (SELECT store_id FROM p_stores LIMIT 2) s, (SELECT region_id FROM p_regions LIMIT 2) r
-    LIMIT 2;
+LIMIT 2;
 
 -- INSERT INTO p_stores_business_hr
 INSERT INTO p_stores_business_hr (business_hr_id, store_id, day_of_week, open_time, close_time)
@@ -104,4 +104,3 @@ INSERT INTO p_errors (error_id, user_id, request_url, http_method, error_code, e
 VALUES
     (gen_random_uuid(), 'user001', '/api/test', 'GET', '404', 'Not Found', '127.0.0.1', 'PostmanRuntime', now()),
     (gen_random_uuid(), 'user002', '/api/test2', 'POST', '500', 'Internal Server Error', '127.0.0.1', 'PostmanRuntime', now());
-
