@@ -1,8 +1,13 @@
 package com.profect.delivery.domain.menu.service;
 
+import com.profect.delivery.domain.menu.dto.response.MenuDetailResponse;
+import com.profect.delivery.domain.menu.dto.response.MenuCategoriesResponse;
+import com.profect.delivery.domain.menu.dto.response.MenuCategoryResponse;
+import com.profect.delivery.domain.menu.dto.response.MenuItemResponse;
 import com.profect.delivery.domain.menu.repository.MenuCategoryRepository;
 import com.profect.delivery.domain.store.repository.StoreRepository;
 import com.profect.delivery.global.entity.MenuCategory;
+import com.profect.delivery.global.entity.Role;
 import com.profect.delivery.global.entity.Store;
 import com.profect.delivery.global.exception.ConflictException;
 import com.profect.delivery.global.exception.NotFoundException;
@@ -13,11 +18,17 @@ import com.profect.delivery.domain.menu.dto.response.UpdateMenuResponse;
 import com.profect.delivery.global.entity.Menu;
 import com.profect.delivery.domain.menu.repository.MenuRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -96,4 +107,41 @@ public class MenuService {
 
         menu.auditDelete(username);
     }
+
+    @Transactional(readOnly = true)
+    public MenuCategoriesResponse listMenusByCategory(UUID storeId,
+                                                     UUID categoryId,
+                                                     Pageable pageable,
+                                                     Role role) {
+        boolean publicOnly = (role == Role.CUSTOMER);
+        Page<Menu> menuPage = menuRepository.searchMenus(storeId, categoryId, publicOnly, pageable);
+        
+        Map<UUID, List<Menu>> menusByCategory = menuPage.getContent().stream()
+                .collect(Collectors.groupingBy(menu -> menu.getMenuCategory().getMenuCategoryId()));
+        
+        List<MenuCategoryResponse> categories = menusByCategory.entrySet().stream()
+                .map(entry -> {
+                    Menu firstMenu = entry.getValue().get(0);
+                    return new MenuCategoryResponse(
+                            entry.getKey(),
+                            firstMenu.getMenuCategory().getMenuCategoryName(),
+                            entry.getValue().stream()
+                                    .map(MenuItemResponse::from)
+                                    .toList()
+                    );
+                })
+                .toList();
+        
+        return new MenuCategoriesResponse(categories, menuPage.getTotalElements(), menuPage.getTotalPages());
+    }
+
+    @Transactional(readOnly = true)
+    public MenuDetailResponse getMenuDetail(UUID storeId, UUID menuId) {
+        Menu menu = menuRepository.findByStoreStoreIdAndMenuId(storeId, menuId)
+                .orElseThrow(() -> new NotFoundException("MENU NOT FOUND"));
+        
+        return MenuDetailResponse.from(menu);
+    }
+
+
 }
