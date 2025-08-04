@@ -81,6 +81,6 @@ public class User {
         if (isPublic != null) this.isPublic = isPublic;
         this.updatedAt = Timestamp.valueOf(LocalDateTime.now());
         this.updatedBy = updatedBy;
-         //나중에 수정 update by
+        //나중에 수정 update by
     }
 }

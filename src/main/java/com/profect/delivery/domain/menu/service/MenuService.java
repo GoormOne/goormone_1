@@ -47,15 +47,15 @@ public class MenuService {
         }
 
         Menu menu = Menu.builder()
-                        .store(store)
-                        .menuCategory(menuCategory)
-                        .menuName(reqDto.menuName())
-                        .menuPrice(reqDto.menuPrice())
-                        .menuDescription(reqDto.menuDescription())
-                        .isPublic(Boolean.TRUE.equals(reqDto.isPublic()))
-                        .createdAt(LocalDateTime.now())
-                        .createdBy(username)
-                        .build();
+                .store(store)
+                .menuCategory(menuCategory)
+                .menuName(reqDto.menuName())
+                .menuPrice(reqDto.menuPrice())
+                .menuDescription(reqDto.menuDescription())
+                .isPublic(Boolean.TRUE.equals(reqDto.isPublic()))
+                .createdAt(LocalDateTime.now())
+                .createdBy(username)
+                .build();
 
         Menu saved = menuRepository.save(menu);
         return new CreateMenuResponse(saved.getMenuId(), saved.getMenuName());
