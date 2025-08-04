@@ -18,11 +18,12 @@ public record ApiResponse<T> (
         return new ApiResponse<>(true, data, null);
     }
 
-    public static <T> ApiResponse<T> fail(DefaultErrorCode errorCode) {
-        return new ApiResponse<>(false, null, ErrorResponse.of(errorCode.getHttpStatus().value(), errorCode.getMessage()));
+    public static <T> ApiResponse<T> fail(DefaultErrorCode errorCode, String path) {
+        return new ApiResponse<>(false, null,
+                ErrorResponse.of(errorCode.getHttpStatus().value(), errorCode.getMessage(), path));
     }
 
-    public static <T> ApiResponse<T> validFail(String errorMessage) {
-        return new ApiResponse<>(false, null, ErrorResponse.of(HttpStatus.BAD_REQUEST.value(), errorMessage));
+    public static <T> ApiResponse<T> validFail(int statusCode, String errorMessage, String path) {
+        return new ApiResponse<>(false, null, ErrorResponse.of(statusCode, errorMessage, path));
     }
 }

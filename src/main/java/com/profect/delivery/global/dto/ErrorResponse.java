@@ -18,10 +18,11 @@ public class ErrorResponse {
     private LocalDateTime timestamp;
 
     // ErrorResponse.java
-    public static ErrorResponse of(int code, String message) {
+    public static ErrorResponse of(int code, String message, String path) {
         return ErrorResponse.builder()
                 .code(code)
                 .message(message)
+                .path(path)
                 .timestamp(LocalDateTime.now())
                 .build();
     }
