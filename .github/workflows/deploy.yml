@@ -42,8 +42,7 @@ jobs:
 
       - name: Copy JAR to EC2
         run: |
-          scp -o StrictHostKeyChecking=no -i private_key.pem build/libs/${{ secrets.JAR_NAME }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ec2-user/app/app.jar
-
+          scp -o StrictHostKeyChecking=no -i private_key.pem ./${{ secrets.JAR_NAME }} ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/home/ec2-user/app/app.jar
       - name: Run JAR on EC2
         run: |
           ssh -o StrictHostKeyChecking=no -i private_key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << EOF
