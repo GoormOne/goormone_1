@@ -1,49 +1,45 @@
-
 -- INSERT INTO p_users
 INSERT INTO p_users (user_id, username, password, name, birth, email, role, is_public, is_banned, created_at, created_by)
-VALUES
-    ('user001', 'userone', 'pw1234', '홍길동', '1990-01-01', 'user1@example.com', 'CUSTOMER', true, false, now(), 'system'),
-    ('user002', 'usertwo', 'pw5678', '김철수', '1985-05-05', 'user2@example.com', 'OWNER', false, false, now(), 'system');
+VALUES 
+('user001', 'userone', 'pw1234', '홍길동', '1990-01-01', 'user1@example.com', 'CUSTOMER', true, false, now(), 'system'),
+('user002', 'usertwo', 'pw5678', '김철수', '1985-05-05', 'user2@example.com', 'OWNER', false, false, now(), 'system');
 
 -- INSERT INTO p_customer_address
 INSERT INTO p_customer_address (address_cd, user_id, address_name, address1, address2, zip_cd, user_latitude, user_longitude, is_default, created_at)
-VALUES
-    (gen_random_uuid(), 'user001', '집', '서울시 강남구', '101동 202호', '06234', 37.4981, 127.0276, true, now()),
-    (gen_random_uuid(), 'user002', '회사', '서울시 서초구', '301동 302호', '06611', 37.4923, 127.0145, false, now());
+VALUES 
+(gen_random_uuid(), 'user001', '집', '서울시 강남구', '101동 202호', '06234', 37.4981, 127.0276, true, now()),
+(gen_random_uuid(), 'user002', '회사', '서울시 서초구', '301동 302호', '06611', 37.4923, 127.0145, false, now());
 
 -- INSERT INTO p_regions
 INSERT INTO p_regions (region_id, region_1depth_name, region_2depth_name, region_3depth_name, created_at)
-VALUES
-    (gen_random_uuid(), '서울특별시', '강남구', '역삼동', now()),
-    (gen_random_uuid(), '서울특별시', '서초구', '반포동', now()),
-    (gen_random_uuid(), '서울특별시', '서대문구', '대현동', now()),
-    (gen_random_uuid(), '서울특별시', '서대문구', '신촌동', now()),
-    (gen_random_uuid(), '서울특별시', '서대문구', '아현동', now());;
+VALUES 
+(gen_random_uuid(), '서울특별시', '강남구', '역삼동', now()),
+(gen_random_uuid(), '서울특별시', '서초구', '반포동', now());
 
 -- INSERT INTO p_stores_category
 INSERT INTO p_stores_category (stores_category_id, stores_category)
-VALUES
-    (gen_random_uuid(), '치킨'),
-    (gen_random_uuid(), '피자');
+VALUES 
+(gen_random_uuid(), '치킨'),
+(gen_random_uuid(), '피자');
 
 -- INSERT INTO p_stores
 INSERT INTO p_stores (
-    store_id, user_id, stores_category_id, store_name, store_description,
-    address1, address2, zip_cd, store_phone, store_latitude, store_longitude,
-    is_banned, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by, deleted_rs
+  store_id, user_id, stores_category_id, store_name, store_description,
+  address1, address2, zip_cd, store_phone, store_latitude, store_longitude, open_time, close_time,
+  is_banned, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by, deleted_rs
 ) VALUES
-      (
-          gen_random_uuid(), 'user002', (SELECT stores_category_id FROM p_stores_category LIMIT 1),
-          '강남고기집', '고기 맛집입니다.',
-          '서울시 강남구', '101호', '06234', '010-1111-1111', 37.4981, 127.0276,
-          false, now(), 'user002', NULL, NULL, NULL, NULL, NULL
-      ),
-      (
-          gen_random_uuid(), 'user002', (SELECT stores_category_id FROM p_stores_category OFFSET 1 LIMIT 1),
-          '서초분식', '분식 전문점입니다.',
-          '서울시 서초구', '202호', '06611', '010-2222-2222', 37.4923, 127.0145,
-          false, now(), 'user002', NULL, NULL, NULL, NULL, NULL
-      );
+(
+  gen_random_uuid(), 'user002', (SELECT stores_category_id FROM p_stores_category LIMIT 1),
+  '강남고기집', '고기 맛집입니다.',
+  '서울시 강남구', '101호', '06234', '010-1111-1111', 37.4981, 127.0276,
+  now(), now(), false, now(), 'user002', NULL, NULL, NULL, NULL, NULL
+),
+(
+  gen_random_uuid(), 'user002', (SELECT stores_category_id FROM p_stores_category OFFSET 1 LIMIT 1),
+  '서초분식', '분식 전문점입니다.',
+  '서울시 서초구', '202호', '06611', '010-2222-2222', 37.4923, 127.0145,
+  now(), now(), false, now(), 'user002', NULL, NULL, NULL, NULL, NULL
+);
 -- INSERT INTO p_stores_regions
 INSERT INTO p_stores_regions (store_id, region_id, created_at)
 SELECT s.store_id, r.region_id, now()
@@ -96,11 +92,11 @@ SELECT gen_random_uuid(), store_id, '2025-01-01', '2025-01-31', 2, 4.5, '좋은 
 
 -- INSERT INTO p_payments
 INSERT INTO p_payments (payment_id, user_id, store_id, order_id, payment_method, card_number, payment_amount, payment_time, payment_result)
-SELECT gen_random_uuid(), 'user001', p_stores.store_id, o.order_id, 'CARD', '1234567890123456', 20000, now(), 'SUCCESS'
+SELECT gen_random_uuid(), 'user001', o.store_id, o.order_id, 'CARD', '1234567890123456', 20000, now(), 'SUCCESS'
 FROM p_stores, p_orders o LIMIT 2;
 
 -- INSERT INTO p_errors
 INSERT INTO p_errors (error_id, user_id, request_url, http_method, error_code, error_message, client_ip, user_agent, created_at)
-VALUES
-    (gen_random_uuid(), 'user001', '/api/test', 'GET', '404', 'Not Found', '127.0.0.1', 'PostmanRuntime', now()),
-    (gen_random_uuid(), 'user002', '/api/test2', 'POST', '500', 'Internal Server Error', '127.0.0.1', 'PostmanRuntime', now());
+VALUES 
+(gen_random_uuid(), 'user001', '/api/test', 'GET', '404', 'Not Found', '127.0.0.1', 'PostmanRuntime', now()),
+(gen_random_uuid(), 'user002', '/api/test2', 'POST', '500', 'Internal Server Error', '127.0.0.1', 'PostmanRuntime', now());
