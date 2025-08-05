@@ -17,6 +17,7 @@ public class ErrorResponse {
     @JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDateTime timestamp;
 
+    // ErrorResponse.java
     public static ErrorResponse of(int code, String message, String path) {
         return ErrorResponse.builder()
                 .code(code)

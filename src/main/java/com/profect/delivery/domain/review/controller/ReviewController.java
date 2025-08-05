@@ -30,28 +30,36 @@ public class ReviewController {
     }
 
     // 특정 리뷰 조회
-    @GetMapping(value="/{storeId}", params="review_id")
+//    @GetMapping(value="/{storeId}", params="review_id")
+//    public ResponseEntity<ApiResponse<ReviewResponseDto>> getSingleReview(
+//            @PathVariable UUID storeId, @RequestParam("review_id") UUID reviewId) {
+//        try {
+//            ReviewResponseDto dto = reviewService.getReviewByStoreIdAndReviewId(storeId, reviewId);
+//            return ResponseEntity.ok(ApiResponse.success(dto));
+//        } catch (IllegalArgumentException e) {
+//            return ResponseEntity.badRequest().body(ApiResponse.failure(
+//                    new ErrorResponse(400, e.getMessage(), "/reviews/" + storeId, LocalDateTime.now()
+//            )));
+//        }
+//    }
+    @GetMapping(value = "/{storeId}", params = "review_id")
     public ResponseEntity<ApiResponse<ReviewResponseDto>> getSingleReview(
-            @PathVariable UUID storeId, @RequestParam("review_id") UUID reviewId) {
-        try {
-            ReviewResponseDto dto = reviewService.getReviewByStoreIdAndReviewId(storeId, reviewId);
-            return ResponseEntity.ok(ApiResponse.success(dto));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(ApiResponse.failure(
-                    new ErrorResponse(400, e.getMessage(), "/reviews/" + storeId, LocalDateTime.now()
-            )));
-        }
+            @PathVariable UUID storeId,
+            @RequestParam("review_id") UUID reviewId
+    ) {
+        ReviewResponseDto dto = reviewService.getReviewByStoreIdAndReviewId(storeId, reviewId);
+        return ResponseEntity.ok(ApiResponse.success(dto));
     }
 
 
     // 리뷰 생성
     @PostMapping("/{storeId}")
-    public ResponseEntity<ApiResponse<String>> createReview(
+    public ResponseEntity<ApiResponse<Void>> createReview(
             @PathVariable UUID storeId,
             @RequestBody ReviewRequestDto request
     ) {
         reviewService.createReview(storeId, request);
-        return ResponseEntity.ok(ApiResponse.success("리뷰가 성공적으로 등록되었습니다."));
+        return ResponseEntity.ok(ApiResponse.success());
     }
 
     // 리뷰 삭제
@@ -75,48 +83,63 @@ public class ReviewController {
 //    }
 
     // 리뷰 삭제
+//    @DeleteMapping("/{storeId}")
+//    public ResponseEntity<ApiResponse<String>> deleteReview(
+//            @PathVariable UUID storeId,
+//            @RequestParam("review_id") UUID reviewId
+//    ) {
+//        try {
+//            String message = reviewService.deleteReview(storeId, reviewId);
+//            return ResponseEntity.ok(ApiResponse.success(message));
+//        } catch (IllegalArgumentException e) {
+//            ErrorResponse error = new ErrorResponse(
+//                    40000,
+//                    e.getMessage(),
+//                    "/reviews/" + storeId,
+//                    LocalDateTime.now()
+//            );
+//            return ResponseEntity.badRequest().body(ApiResponse.failure(error));
+//        }
+//    }
+
     @DeleteMapping("/{storeId}")
-    public ResponseEntity<ApiResponse<String>> deleteReview(
+    public ResponseEntity<ApiResponse<Void>> deleteReview(
             @PathVariable UUID storeId,
             @RequestParam("review_id") UUID reviewId
     ) {
-        try {
-            String message = reviewService.deleteReview(storeId, reviewId);
-            return ResponseEntity.ok(ApiResponse.success(message));
-        } catch (IllegalArgumentException e) {
-            ErrorResponse error = new ErrorResponse(
-                    40000,
-                    e.getMessage(),
-                    "/reviews/" + storeId,
-                    LocalDateTime.now()
-            );
-            return ResponseEntity.badRequest().body(ApiResponse.failure(error));
-        }
+         reviewService.deleteReview(storeId, reviewId);
+        return ResponseEntity.ok(ApiResponse.success());
     }
-
-
-
-
-    // 리뷰 수정
     @PutMapping("/{storeId}")
     public ResponseEntity<ApiResponse<String>> updateReview(
             @PathVariable UUID storeId,
             @RequestParam("review_id") UUID reviewId,
             @RequestBody ReviewRequestDto request
     ) {
-        try {
-            reviewService.updateReview(storeId, reviewId, request);
-            return ResponseEntity.ok(ApiResponse.success("리뷰가 수정되었습니다."));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(ApiResponse.failure(
-                            new ErrorResponse(
-                                    400,
-                                    e.getMessage(),
-                                    "/reviews/" + storeId,
-                                    LocalDateTime.now()
-                            )));
-        }
+        reviewService.updateReview(storeId, reviewId, request);
+        return ResponseEntity.ok(ApiResponse.success("리뷰가 수정되었습니다."));
     }
+
+    // 리뷰 수정
+//    @PutMapping("/{storeId}")
+//    public ResponseEntity<ApiResponse<String>> updateReview(
+//            @PathVariable UUID storeId,
+//            @RequestParam("review_id") UUID reviewId,
+//            @RequestBody ReviewRequestDto request
+//    ) {
+//        try {
+//            reviewService.updateReview(storeId, reviewId, request);
+//            return ResponseEntity.ok(ApiResponse.success("리뷰가 수정되었습니다."));
+//        } catch (IllegalArgumentException e) {
+//            return ResponseEntity
+//                    .badRequest()
+//                    .body(ApiResponse.failure(
+//                            new ErrorResponse(
+//                                    400,
+//                                    e.getMessage(),
+//                                    "/reviews/" + storeId,
+//                                    LocalDateTime.now()
+//                            )));
+//        }
+//    }
 }
