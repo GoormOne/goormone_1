@@ -8,6 +8,9 @@ import com.profect.delivery.global.dto.ErrorResponse;
 import com.profect.delivery.global.entity.Cart;
 
 import com.profect.delivery.global.entity.CartItem;
+import com.profect.delivery.global.exception.BusinessException;
+import com.profect.delivery.global.exception.custom.BusinessErrorCode;
+import com.profect.delivery.global.exception.custom.OrderErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -21,7 +24,7 @@ import java.util.UUID;
 
 
 @RestController
-@RequestMapping("/cart")
+@RequestMapping("/carts")
 @RequiredArgsConstructor
 @Slf4j
 public class CartController {
@@ -34,7 +37,7 @@ public class CartController {
     @GetMapping()
     public ResponseEntity<ApiResponse<CartInfoDto>> getCart(){
         //ControllerAdvice에서 model로 받기
-        String userId = "user011";
+        String userId = "U000000011";
 
 
         log.info("userId={}",userId);
@@ -49,12 +52,12 @@ public class CartController {
 
     // 카트 생성 POST 요청
     @PostMapping("/{storeId}")
-    public ResponseEntity<ApiResponse> createUser(
+    public ResponseEntity<ApiResponse<Object>> createUser(
             @RequestBody List<AddCartDto> addCartDtoList,
             @PathVariable String storeId
     ) throws Exception {
         //model 전달
-        String userId = "user001";
+        String userId = "U000000011";
 
         UUID cartId = cartService.saveCart(addCartDtoList, userId, storeId);
 
@@ -65,28 +68,29 @@ public class CartController {
         log.info("complete add cart cartId={}", cartId);
 
 
-        return new  ResponseEntity<>(ApiResponse.success(cartId), HttpStatus.OK);
+        return ResponseEntity.ok(ApiResponse.success(cartId));
     }
 
     // 카트 삭제
     @DeleteMapping("/")
-    public ResponseEntity<ApiResponse> deleteCart(String cartId){
+    public ResponseEntity<ApiResponse<Void>> deleteCart(String cartId){
         UUID cartUuid = UUID.fromString(cartId);
 
         if (cartService.deleteCartByCartId(cartUuid)){
             return new  ResponseEntity<>(ApiResponse.success(null), HttpStatus.OK);
         }else {
-            ErrorResponse errorResponse = new ErrorResponse(
-                    2000, "존재하지 않는 카트입니다.", "DELETE /cart", LocalDateTime.now());
-
-            return new  ResponseEntity<>(ApiResponse.failure(errorResponse), HttpStatus.OK);
+            throw new BusinessException(OrderErrorCode.NOT_FOUND_CART);
+//            ErrorResponse errorResponse = new ErrorResponse(
+//                    2000, "존재하지 않는 카트입니다.", "DELETE /cart", LocalDateTime.now());
+//
+//            return new  ResponseEntity<>(ApiResponse.failure(errorResponse), HttpStatus.OK);
         }
 
     }
 
     //카트에 아이템 추가
     @PostMapping("/item/{cartId}")
-    public ResponseEntity<ApiResponse> addItemToCart(
+    public ResponseEntity<ApiResponse<Object>> addItemToCart(
             @PathVariable String cartId,
             List<AddCartDto> addCartList){
 
@@ -100,45 +104,64 @@ public class CartController {
         }
 
         List<CartItem> cartItemList = cartService.saveCartItems(cartItems);
-
-        if(cartItemList == null){
-            return new  ResponseEntity<>(ApiResponse.failure(null), HttpStatus.OK);
-        }else {
-            return new  ResponseEntity<>(ApiResponse.success(cartItemList), HttpStatus.OK);
-        }
+        return  new ResponseEntity<>(ApiResponse.success(cartItemList), HttpStatus.OK);
+//        if(cartItemList == null){
+//            return new  ResponseEntity<>(ApiResponse.fail(), HttpStatus.OK);
+//        }else {
+//            return new  ResponseEntity<>(ApiResponse.success(cartItemList), HttpStatus.OK);
+//        }
 
 
     }
 
     //카트안 아이템 삭제
     @DeleteMapping("/item/{cartItemId}")
-    public ResponseEntity<ApiResponse> deleteCartItem(@PathVariable String cartItemId){
+    public ResponseEntity<ApiResponse<Void>> deleteCartItem(@PathVariable String cartItemId){
 
         if (cartService.deleteCartItemById(cartItemId)){
-            return new  ResponseEntity<>(ApiResponse.success(null), HttpStatus.OK);
+            return ResponseEntity.ok(ApiResponse.success());
         }else {
-            return new  ResponseEntity<>(ApiResponse.failure(null), HttpStatus.OK);
+            throw new BusinessException(OrderErrorCode.NOT_FOUND_ITEM);
         }
+    }
+
+    @PutMapping("/item/{cartItemId}")
+    public ResponseEntity<ApiResponse<Void>> updateCartItem(
+            @PathVariable String cartItemId,
+            @RequestBody List<AddCartDto> addCartList) {
+
+        String userId = "U000000011"; // TODO: 실제 인증된 사용자 정보로 대체 필요
+
+        if (addCartList == null || addCartList.isEmpty()) {
+            throw new BusinessException(BusinessErrorCode.NOT_FOUND);
+        }
+
+        boolean updated = cartService.updateCartItem(UUID.fromString(cartItemId), addCartList, userId);
+
+        if (!updated) {
+            throw new BusinessException(BusinessErrorCode.FAIL_TO_UPDATE); // 혹은 적절한 에러코드 추가
+        }
+
+        return ResponseEntity.ok(ApiResponse.success());
     }
 
 
     //아이템 수량 수정
-    @PutMapping("/item/{cartItemId}")
-    public ResponseEntity<ApiResponse> updateCartItem(
-            @PathVariable String cartItemId,
-            List<AddCartDto> addCartList){
-
-        String userId = "user001";
-        if (addCartList == null || addCartList.isEmpty()){
-            return new  ResponseEntity<>(ApiResponse.failure(null), HttpStatus.OK);
-        }
-
-        if(cartService.updateCartItem(UUID.fromString(cartItemId), addCartList,userId)){
-            return new  ResponseEntity<>(ApiResponse.success(null), HttpStatus.OK);
-        }else{
-            return new  ResponseEntity<>(ApiResponse.success(null), HttpStatus.OK);
-        }
-
-    }
+//    @PutMapping("/item/{cartItemId}")
+//    public ResponseEntity<ApiResponse<Void>> updateCartItem(
+//            @PathVariable String cartItemId,
+//            List<AddCartDto> addCartList){
+//
+//        String userId = "user001";
+//        if (addCartList == null || addCartList.isEmpty()){
+//            throw new BusinessException(BusinessErrorCode.NOT_FOUND);    }
+//
+//        if(cartService.updateCartItem(UUID.fromString(cartItemId), addCartList,userId)){
+//            return new  ResponseEntity<>(ApiResponse.success(null), HttpStatus.OK);
+//        }else{
+//            return new  ResponseEntity<>(ApiResponse.success(null), HttpStatus.OK);
+//        }
+//
+//    }
 
 }

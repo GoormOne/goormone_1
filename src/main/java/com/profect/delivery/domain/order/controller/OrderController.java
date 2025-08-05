@@ -6,6 +6,11 @@ import com.profect.delivery.domain.order.service.OrderService;
 import com.profect.delivery.global.dto.ApiResponse;
 import com.profect.delivery.global.dto.ErrorResponse;
 import com.profect.delivery.global.entity.Order;
+import com.profect.delivery.global.exception.BusinessException;
+import com.profect.delivery.global.exception.custom.AuthErrorCode;
+import com.profect.delivery.global.exception.custom.BusinessErrorCode;
+import com.profect.delivery.global.exception.custom.DefaultErrorCode;
+import com.profect.delivery.global.exception.custom.OrderErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,9 +42,10 @@ private final OrderService orderService;
         List<Order> orders = orderService.findAll(userId);
 
         if (orders.isEmpty()){
-            ErrorResponse errorResponse = new ErrorResponse(
-                    2000, "내역이 존재하지 않습니다.", request.getRequestURI(), LocalDateTime.now());
-            return new ResponseEntity<>(ApiResponse.failure(errorResponse),  HttpStatus.OK);
+            throw new BusinessException(OrderErrorCode.NOT_FOUND_ORDER);
+//            ErrorResponse errorResponse = new ErrorResponse(
+//                    2000, "내역이 존재하지 않습니다.", request.getRequestURI(), LocalDateTime.now());
+//            return new ResponseEntity<>(ApiResponse.failure(errorResponse),  HttpStatus.OK);
         }
 
         return new  ResponseEntity<>(ApiResponse.success(orders), HttpStatus.OK);
@@ -57,9 +63,10 @@ private final OrderService orderService;
         if (order.getUserId().equals(userId)){
             return new  ResponseEntity<>(ApiResponse.success(order), HttpStatus.OK);
         }else{
-            ErrorResponse errorResponse = new ErrorResponse(
-                    2002, "보인 주문 내역이 아닙니다.", request.getRequestURI(), LocalDateTime.now());
-            return new  ResponseEntity<>(ApiResponse.failure(errorResponse), HttpStatus.OK);
+            throw new BusinessException(AuthErrorCode.UNAUTHORIZED);
+//            ErrorResponse errorResponse = new ErrorResponse(
+//                    2002, "보인 주문 내역이 아닙니다.", request.getRequestURI(), LocalDateTime.now());
+//            return new  ResponseEntity<>(ApiResponse.failure(errorResponse), HttpStatus.OK);
         }
     }
 
