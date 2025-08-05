@@ -26,25 +26,18 @@ import java.util.stream.Collectors;
 
         @GetMapping
         public ResponseEntity<ApiResponse<UserResponseDto>> getUser() {
-            String currentUserId = "U000000000";//인증인가 가져오면 유저 id 추출
-
-            return userService.getUserById(currentUserId)
-                    .map(UserResponseDto::fromEntity) // Entity를 DTO로 변환
-                    .map(ApiResponse::success)        // 성공 응답으로 래핑
-                    .map(response -> new ResponseEntity<>(response, HttpStatus.OK)) // ResponseEntity 반환
-                    .orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다.")); // 사용자 없을 시 예외 발생
+            String currentUserId = "U000000001";//인증인가 가져오면 유저 id 추출
+            UserResponseDto userDto = userService.getUserById(currentUserId);
+            return  new ResponseEntity<>(ApiResponse.success(userDto), HttpStatus.OK);
         }
 
 
-    @PatchMapping
+        @PatchMapping
         public ResponseEntity<ApiResponse<?>> patchUser(
                 @RequestBody UserUpdateRequestDto userUpdateRequestDto) {
-
             String currentUserId = "U000000001";//인증인가에서 가져온 유저 id
             String updateby="admin";//인증인가에서 가져온 업데이트한 사람
-
             userService.updateUser(userUpdateRequestDto,currentUserId,updateby);
-
             return  new ResponseEntity<>(ApiResponse.success(null), HttpStatus.OK);
         }
 
@@ -53,25 +46,16 @@ import java.util.stream.Collectors;
 
         @GetMapping("/addresses")
         public ResponseEntity<ApiResponse<List<UserAddressesResponseDto>>> getUserAddresses() {
-            String currentUserId = "U000000011";
-
-            List<UserAddressesResponseDto> addresses = userAddressService.findByUserId(currentUserId).stream()
-                    .map(UserAddressesResponseDto::fromEntity) // 각 엔티티를 DTO로 변환
-                    .collect(Collectors.toList()); //
-            if (addresses.isEmpty()) {
-                throw new UserAddressNotFoundException("등록된 주소 정보를 찾을 수 없습니다.");
-            }
-            return new ResponseEntity<>(ApiResponse.success(addresses), HttpStatus.OK);
+            String currentUserId = "U000000001";
+            List<UserAddressesResponseDto> addressesDto = userAddressService.findByUserId(currentUserId);
+            return new ResponseEntity<>(ApiResponse.success(addressesDto), HttpStatus.OK);
         }
 
         @PostMapping("/addresses")
         public ResponseEntity<ApiResponse<?>> postUserAddressses(
                 @RequestBody UserAddressesRequestDto userAddressesRequestDto) {
-
             String currentUserId = "U000000001";
-
             userAddressService.CreateUserAddress(userAddressesRequestDto,currentUserId);
-
             return  new ResponseEntity<>(ApiResponse.success(null), HttpStatus.CREATED);
         }
 
