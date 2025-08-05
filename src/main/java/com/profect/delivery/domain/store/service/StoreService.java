@@ -7,6 +7,9 @@ import com.profect.delivery.domain.store.dto.response.*;
 
 import com.profect.delivery.domain.store.repository.*;
 import com.profect.delivery.global.entity.*;
+import com.profect.delivery.global.exception.BusinessException;
+import com.profect.delivery.global.exception.custom.BusinessErrorCode;
+import com.profect.delivery.global.exception.custom.StoreErrorCode;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -36,11 +39,11 @@ public class StoreService {
         Store store = storeRepository.findByStoreId(storeuuid)
                 .map(s -> {
                     if (s.getDeletedAt() != null) {
-                        throw new RuntimeException("이미 삭제된 매장입니다.");
+                        throw new BusinessException(BusinessErrorCode.ALREADY_DELETED);
                     }
                     return s;
                 })
-                .orElseThrow(() -> new RuntimeException("해당 매장이 존재하지 않습니다."));
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.NOT_FOUND));
 
         return StoreDto.builder()
                 .storeId(store.getStoreId().toString())
@@ -62,11 +65,15 @@ public class StoreService {
                 .build();
     }
 
-    public Store saveStore(@Valid StoreRegisterDto storeRegisterDto) {
-        System.out.println("category in DTO: " + storeRegisterDto.getCategory());
+    public void registerStore(
+            final String userId,
+            final StoreRegisterDto storeRegisterDto) {
+
+
         StoreCategory storeCategory = storeCategoryRepository.findByStoresCategory(storeRegisterDto.getCategory())
-                .orElseThrow(() -> new RuntimeException("Store category not found"));
-        String dummyUserId = "user002";
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.NOT_FOUND_CATEGORY) );
+
+        String dummyUserId = "U000000004";
         Store store = Store.builder()
                 .storeId(UUID.randomUUID())
                 .userId(dummyUserId)
@@ -86,41 +93,32 @@ public class StoreService {
                 .closeTime(storeRegisterDto.getCloseTime())
                 .build();
 
-        //@피드백 하나의 리스트로 저장하는 방법을 생각해볼것
-
-//        return storeRepository.save(store);
 
         Store savedStore = storeRepository.save(store);
-        System.out.println("Saved store ID: " + savedStore.getStoreId()); // ✅ 이거 추가해보세요
-        return savedStore;
+        System.out.println("Saved store ID: " + savedStore.getStoreId());
+
     }
 
     @Transactional
-    public boolean deleteStore(String storeId) {
-        Optional<Store> storeOptional = storeRepository.findByStoreId(UUID.fromString(storeId));
-
-        if (storeOptional.isEmpty()) {
-
-            return false;
-        }
-        Store store = storeOptional.get();
-
+    public  void deleteStore(String userId, String storeId) {
+        Store store = storeRepository.findByStoreId(UUID.fromString(storeId))
+                .orElseThrow(() -> new BusinessException(StoreErrorCode.NOT_FOUND_STORE));
         store.setDeletedAt(LocalDateTime.now());
         store.setDeletedBy(store.getUserId());
         store.setDeletedReason("사용자 요청으로 인한 삭제");
-        //storeRepository.delete(store.get());
-        return true;
+
+
     }
 
     public RegionListDto getRegions(String storeId) {
         Store store = storeRepository.findByStoreId(UUID.fromString(storeId))
                 .map(s -> {
                     if (s.getDeletedAt() != null) {
-                        throw new RuntimeException("이미 삭제된 매장입니다.");
+                        throw new BusinessException(StoreErrorCode.ALREADY_DELETED_STORE);
                     }
                     return s;
                 })
-                .orElseThrow(() -> new RuntimeException("해당 매장이 존재하지 않습니다."));
+                .orElseThrow(() -> new BusinessException(StoreErrorCode.NOT_FOUND_STORE));
 
         List<RegionDto> regionDtos = store.getRegions().stream()
                 .map(region -> new RegionDto(
@@ -136,76 +134,65 @@ public class StoreService {
 
     @Transactional
     public List<UUID> registerRegions(String storeId, RegionListAddressDto regionListAddressDto) {
-        Store store = storeRepository.findByStoreId(UUID.fromString(storeId))
-                .map(s -> {
-                    if (s.getDeletedAt() != null) {
-                        throw new RuntimeException("이미 삭제된 매장입니다.");
-                    }
-                    return s;
-                })
-                .orElseThrow(() -> new RuntimeException("해당 매장이 존재하지 않습니다."));
-
+        Store store = findValidStore(storeId);
         List<UUID> regionIds = new ArrayList<>();
 
         for (RegionAddressDto dto : regionListAddressDto.getRegionListAddressDto()) {
-            UUID regionId = storeRepository.findRegionIdByFullAddress(
-                    dto.getAddress1(), dto.getAddress2(), dto.getAddress3()
-            );
+            Region region = findRegionByAddress(dto);
 
-            if (regionId == null) {
-                throw new RuntimeException("Region ID를 찾을 수 없습니다: " + dto.getAddress1() + " " + dto.getAddress2() + " " + dto.getAddress3());
-            }
-
-            Region region = regionRepository.findById(regionId)
-                    .orElseThrow(() -> new RuntimeException("Region 엔티티를 찾을 수 없습니다: " + regionId));
-
-            // 이미 등록된 StoreRegion인지 확인 (soft delete 제외)
-            boolean exists = store.getStoreRegions().stream()
+            // 중복된 지역이 아닌 경우만 추가
+            boolean isAlreadyRegistered = store.getStoreRegions().stream()
                     .anyMatch(sr -> sr.getRegion().equals(region) && sr.getDeletedAt() == null);
 
-            if (!exists) {
-                StoreRegion storeRegion = new StoreRegion(store, region);
-                store.getStoreRegions().add(storeRegion);
+            if (!isAlreadyRegistered) {
+                store.getStoreRegions().add(new StoreRegion(store, region));
             }
-            regionIds.add(regionId);
+
+            regionIds.add(region.getRegionId());
         }
 
         return regionIds;
     }
+
+    private Store findValidStore(String storeId) {
+        return storeRepository.findByStoreId(UUID.fromString(storeId))
+                .filter(s -> s.getDeletedAt() == null)
+                .orElseThrow(() -> new BusinessException(StoreErrorCode.NOT_FOUND_STORE));
+    }
+
+    private Region findRegionByAddress(RegionAddressDto dto) {
+        return Optional.ofNullable(
+                        storeRepository.findRegionIdByFullAddress(dto.getAddress1(), dto.getAddress2(), dto.getAddress3()))
+                .flatMap(regionRepository::findById)
+                .orElseThrow(() -> new BusinessException(StoreErrorCode.NOT_FOUND_REGION));
+    }
+
+
+
     @Transactional
     public List<UUID> deleteRegion(String storeId, RegionListAddressDto regionListAddressDto) {
         Store store = storeRepository.findByStoreId(UUID.fromString(storeId))
-                .map(s -> {
-                    if (s.getDeletedAt() != null) {
-                        throw new RuntimeException("이미 삭제된 매장입니다.");
-                    }
-                    return s;
-                })
-                .orElseThrow(() -> new RuntimeException("해당 매장이 존재하지 않습니다."));
+                .filter(s -> s.getDeletedAt() == null)
+                .orElseThrow(() -> new BusinessException(StoreErrorCode.NOT_FOUND_STORE));
 
         List<UUID> deletedRegionIds = new ArrayList<>();
 
         for (RegionAddressDto dto : regionListAddressDto.getRegionListAddressDto()) {
-
             UUID regionId = storeRepository.findRegionIdByFullAddress(
                     dto.getAddress1(), dto.getAddress2(), dto.getAddress3()
             );
 
             if (regionId == null) {
-                throw new RuntimeException("Region ID를 찾을 수 없습니다: "
-                        + dto.getAddress1() + " " + dto.getAddress2() + " " + dto.getAddress3());
+                throw new BusinessException(StoreErrorCode.NOT_FOUND_REGION);
             }
 
             Region region = regionRepository.findById(regionId)
-                    .orElseThrow(() -> new RuntimeException("Region 엔티티를 찾을 수 없습니다."));
-
+                    .orElseThrow(() -> new BusinessException(StoreErrorCode.NOT_FOUND_REGION));
 
             StoreRegionId storeRegionId = new StoreRegionId(store.getStoreId(), region.getRegionId());
 
-
             StoreRegion storeRegion = storeRegionRepository.findById(storeRegionId)
-                    .orElseThrow(() -> new RuntimeException("StoreRegion 관계가 없습니다."));
-
+                    .orElseThrow(() -> new BusinessException(StoreErrorCode.NOT_FOUND_STORE_REGION));
 
             if (storeRegion.getDeletedAt() == null) {
                 storeRegion.softDelete();
@@ -224,7 +211,7 @@ public class StoreService {
             return false;
         }
         System.out.println("store: " + store.getStoreId());
-        System.out.println("openTime: " + store.getOpenTime());  // null? → 로딩 안 된 것
+        System.out.println("openTime: " + store.getOpenTime());
         System.out.println("closeTime: " + store.getCloseTime());
         return now.isAfter(store.getOpenTime()) && now.isBefore(store.getCloseTime());
     }
@@ -245,17 +232,32 @@ public class StoreService {
 
         return BigDecimal.valueOf(total).divide(BigDecimal.valueOf(count), 2, RoundingMode.HALF_UP);
     }
+
     public List<StoreSearchDto> searchStoreByKeyword(String keyword) {
-        List<Store> stores = storeRepository.searchStoresByKeyword(keyword);
 
+        System.out.println("🔍 keyword = " + keyword);
+        List<UUID> nameMatchedIds = storeRepository.findStoreIdsByName(keyword);
+        List<UUID> menuMatchedIds = storeRepository.findStoreIdsByMenu(keyword);
 
-        return stores.stream().map(store -> new StoreSearchDto(
-                store.getStoreId().toString(),
-                store.getStoreName(),
-                store.getStoreDescription(),
-                calculateAverageRating(store.getStoreId()),
-                isStoreOpen(store)
-        )).collect(Collectors.toList());
+        Set<UUID> storeIdSet = new HashSet<>();
+        storeIdSet.addAll(nameMatchedIds);
+        storeIdSet.addAll(menuMatchedIds);
+
+        if (storeIdSet.isEmpty()) {
+            throw new BusinessException(BusinessErrorCode.EMPTY_SEARCH_RESULT);
+        }
+
+        List<Store> stores = storeRepository.findByStoreIdIn(new ArrayList<>(storeIdSet));
+
+        return stores.stream()
+                .map(store -> new StoreSearchDto(
+                        store.getStoreId().toString(),
+                        store.getStoreName(),
+                        store.getStoreDescription(),
+                        calculateAverageRating(store.getStoreId()),
+                        isStoreOpen(store)
+                ))
+                .collect(Collectors.toList());
     }
 
 

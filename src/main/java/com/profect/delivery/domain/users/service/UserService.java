@@ -1,9 +1,12 @@
 package com.profect.delivery.domain.users.service;
 
+import com.profect.delivery.domain.users.dto.UserResponseDto;
 import com.profect.delivery.domain.users.dto.UserUpdateRequestDto;
 import com.profect.delivery.domain.users.repository.UserRepository;
+import com.profect.delivery.global.exception.BusinessException;
 import com.profect.delivery.global.exception.UserNotFoundException;
 import com.profect.delivery.global.entity.User;
+import com.profect.delivery.global.exception.custom.UserErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,13 +24,24 @@ public class UserService{//비즈니스 로직
 
 
     @Transactional(readOnly = true)
-    public Optional<User> getUserById(String UserId) {
-        return userRepository.findByUserId(UserId);
+    public UserResponseDto getUserById(String UserId) {
+            User user=userRepository.findByUserId(UserId);
+            if(user==null){
+                throw new BusinessException(UserErrorCode.NOT_FOUND_USER);
+            }
+            //예외 처리 작성
+
+        return UserResponseDto.fromEntity(user);
     }
 
 
     public void updateUser(UserUpdateRequestDto userUpdateRequestDto, String UserId, String UpdatedBy) {
-        User user=userRepository.findByUserId(UserId).orElseThrow(() -> new UserNotFoundException("User not found"));
+        User user=userRepository.findByUserId(UserId);
+        if(user==null){
+            throw new BusinessException(UserErrorCode.NOT_FOUND_USER);
+        }//찾는 유저가 없으면 예왜ㅣ처리
+
+
         user.update(userUpdateRequestDto.getName(),
                 userUpdateRequestDto.getPassword(),
                 userUpdateRequestDto.getEmail(),

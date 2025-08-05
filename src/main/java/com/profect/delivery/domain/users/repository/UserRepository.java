@@ -8,8 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, String> {
-  Optional<User> findByUserId(String UserId);
-  Optional<User> findByUsername(String username);
-  Optional<User> findByEmail(String email);
+public interface UserRepository extends JpaRepository<User, String> {//이 구조가 일반적
+  User findByUserId(String UserId);
+
 }

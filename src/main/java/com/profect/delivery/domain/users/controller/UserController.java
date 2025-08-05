@@ -4,12 +4,15 @@ import com.profect.delivery.domain.users.dto.*;
 import com.profect.delivery.domain.users.service.UserAddressService;
 import com.profect.delivery.domain.users.service.UserService;
 import com.profect.delivery.global.dto.ApiResponse;
+import com.profect.delivery.global.exception.BusinessException;
 import com.profect.delivery.global.exception.UserAddressNotFoundException;
 import com.profect.delivery.global.exception.UserNotFoundException;
+import com.profect.delivery.global.exception.custom.UserErrorCode;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,25 +29,19 @@ import java.util.stream.Collectors;
 
 
         @GetMapping
-        public ResponseEntity<ApiResponse<UserResponseDto>> getUser(@ModelAttribute("currentUsername") String currentUserId) {
-
-            return userService.getUserById(currentUserId)
-                    .map(UserResponseDto::fromEntity) // Entity를 DTO로 변환
-                    .map(ApiResponse::success)        // 성공 응답으로 래핑
-                    .map(response -> new ResponseEntity<>(response, HttpStatus.OK)) // ResponseEntity 반환
-                    .orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다.")); // 사용자 없을 시 예외 발생
+        public ResponseEntity<ApiResponse<UserResponseDto>> getUser(HttpServletRequest request) {
+            String currentUserId = request.getParameter("userId");;//인증인가 가져오면 유저 id 추출
+            UserResponseDto userDto = userService.getUserById(currentUserId);
+            return  new ResponseEntity<>(ApiResponse.success(userDto), HttpStatus.OK);
         }
 
 
-    @PatchMapping
-        public ResponseEntity<ApiResponse<?>> patchUser(
-                @RequestBody UserUpdateRequestDto userUpdateRequestDto,
-                @ModelAttribute("currentUsername") String currentUserId) {
-
-            String updateby = currentUserId;
-
+        @PatchMapping
+        public ResponseEntity<ApiResponse<?>> patchUser(HttpServletRequest request,
+               @Valid @RequestBody UserUpdateRequestDto userUpdateRequestDto) {
+            String currentUserId = request.getParameter("userId");;//인증인가에서 가져온 유저 id
+            String updateby="user";//인증인가에서 가져온 업데이트한 사람
             userService.updateUser(userUpdateRequestDto,currentUserId,updateby);
-
             return  new ResponseEntity<>(ApiResponse.success(null), HttpStatus.OK);
         }
 
@@ -52,24 +49,17 @@ import java.util.stream.Collectors;
 
 
         @GetMapping("/addresses")
-        public ResponseEntity<ApiResponse<List<UserAddressesResponseDto>>> getUserAddresses(@ModelAttribute("currentUsername") String currentUserId) {
-
-            List<UserAddressesResponseDto> addresses = userAddressService.findByUserId(currentUserId).stream()
-                    .map(UserAddressesResponseDto::fromEntity) // 각 엔티티를 DTO로 변환
-                    .collect(Collectors.toList()); //
-            if (addresses.isEmpty()) {
-                throw new UserAddressNotFoundException("등록된 주소 정보를 찾을 수 없습니다.");
-            }
-            return new ResponseEntity<>(ApiResponse.success(addresses), HttpStatus.OK);
+        public ResponseEntity<ApiResponse<List<UserAddressesResponseDto>>> getUserAddresses(HttpServletRequest request) {
+            String currentUserId = request.getParameter("userId");
+            List<UserAddressesResponseDto> addressesDto = userAddressService.findByUserId(currentUserId);
+            return new ResponseEntity<>(ApiResponse.success(addressesDto), HttpStatus.OK);
         }
 
         @PostMapping("/addresses")
-        public ResponseEntity<ApiResponse<?>> postUserAddressses(
-                @RequestBody UserAddressesRequestDto userAddressesRequestDto,
-                @ModelAttribute("currentUsername") String currentUserId) {
-
+        public ResponseEntity<ApiResponse<?>> postUserAddressses(HttpServletRequest request,
+                @RequestBody UserAddressesRequestDto userAddressesRequestDto) {
+            String currentUserId = request.getParameter("userId");
             userAddressService.CreateUserAddress(userAddressesRequestDto,currentUserId);
-
             return  new ResponseEntity<>(ApiResponse.success(null), HttpStatus.CREATED);
         }
 

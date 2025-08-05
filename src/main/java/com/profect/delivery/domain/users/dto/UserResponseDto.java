@@ -1,5 +1,6 @@
 package com.profect.delivery.domain.users.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.profect.delivery.global.entity.Role;
 import com.profect.delivery.global.entity.User;
 import lombok.Data;
@@ -16,6 +17,7 @@ public class UserResponseDto {
     private String username;
     private String password;
     private String name;
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private Date birth;
     private String email;
     private Role role;
