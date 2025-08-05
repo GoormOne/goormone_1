@@ -41,7 +41,7 @@ public class GlobalExceptionalHandler {
                                                                   HttpServletRequest request) {
         ErrorResponse err = ErrorResponse.of(40901, e.getMessage(), request.getRequestURI());
 
-        saveErrorLog(e, request, 40901);
+//        saveErrorLog(e, request, 40901);
 
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
@@ -52,7 +52,7 @@ public class GlobalExceptionalHandler {
     public ResponseEntity<ApiResponse<?>> handleNotFoundException(NotFoundException e,
                                                                   HttpServletRequest request) {
         ErrorResponse err = ErrorResponse.of(40401, e.getMessage(), request.getRequestURI());
-        saveErrorLog(e, request, 40401);
+//        saveErrorLog(e, request, 40401);
 
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
@@ -64,7 +64,7 @@ public class GlobalExceptionalHandler {
                                                                       HttpServletRequest request) {
         ErrorResponse err = ErrorResponse.of(40400, e.getMessage(), request.getRequestURI());
 
-        saveErrorLog(e, request, 40400);
+//        saveErrorLog(e, request, 40400);
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(ApiResponse.failure(err));
@@ -75,7 +75,7 @@ public class GlobalExceptionalHandler {
                                                                              HttpServletRequest request) {
         ErrorResponse err = ErrorResponse.of(40402, e.getMessage(), request.getRequestURI());
 
-        saveErrorLog(e, request, 40402);
+//        saveErrorLog(e, request, 40402);
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(ApiResponse.failure(err));
@@ -85,7 +85,7 @@ public class GlobalExceptionalHandler {
     public ResponseEntity<ApiResponse<?>> handleInvalidInputException(InvalidInputException e,
                                                                       HttpServletRequest request) {
         ErrorResponse err = ErrorResponse.of(40001, e.getMessage(), request.getRequestURI());
-        saveErrorLog(e, request, 40001);
+//        saveErrorLog(e, request, 40001);
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ApiResponse.failure(err));
@@ -96,7 +96,7 @@ public class GlobalExceptionalHandler {
                                                                      HttpServletRequest request) {
         String errorMessage = e.getBindingResult().getAllErrors().get(0).getDefaultMessage();
         ErrorResponse err = ErrorResponse.of(40002, "유효성 검사 실패: " + errorMessage, request.getRequestURI());
-        saveErrorLog(e, request, 40002);
+//        saveErrorLog(e, request, 40002);
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(ApiResponse.failure(err));
@@ -106,7 +106,7 @@ public class GlobalExceptionalHandler {
     public ResponseEntity<ApiResponse<?>> handleAllUncaughtException(Exception e,
                                                                      HttpServletRequest request) {
         ErrorResponse err = ErrorResponse.of(50000, "서버 내부 오류가 발생했습니다.", request.getRequestURI());
-        saveErrorLog(e, request, 50000);
+//        saveErrorLog(e, request, 50000);
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ApiResponse.failure(err));

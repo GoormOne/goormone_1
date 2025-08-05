@@ -3,13 +3,13 @@ spring:
     name: sample-project
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/sample
-  # url:jdbc:postgresql://43.200.244.12:5432/sample
+  #  url: jdbc:postgresql://localhost:5432/sample
+    url: jdbc:postgresql://43.200.244.12:5432/sample
     driver-class-name: org.postgresql.Driver
-    username: user
-  # username: postgres
+  #  username: user
+    username: postgres
+  #  password: password
     password: password
-  # password: password
   jpa:
     hibernate:
       ddl-auto: none  # Hibernate가 테이블 생성 안 하도록 설정

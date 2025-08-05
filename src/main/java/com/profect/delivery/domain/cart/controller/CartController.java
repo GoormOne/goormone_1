@@ -1,6 +1,5 @@
 package com.profect.delivery.domain.cart.controller;
 
-import com.profect.delivery.domain.cart.dto.ItemDto;
 import com.profect.delivery.domain.cart.service.CartService;
 import com.profect.delivery.domain.cart.dto.AddCartDto;
 import com.profect.delivery.domain.cart.dto.CartInfoDto;
@@ -128,6 +127,17 @@ public class CartController {
     public ResponseEntity<ApiResponse> updateCartItem(
             @PathVariable String cartItemId,
             List<AddCartDto> addCartList){
+
+        String userId = "user001";
+        if (addCartList == null || addCartList.isEmpty()){
+            return new  ResponseEntity<>(ApiResponse.failure(null), HttpStatus.OK);
+        }
+
+        if(cartService.updateCartItem(UUID.fromString(cartItemId), addCartList,userId)){
+            return new  ResponseEntity<>(ApiResponse.success(null), HttpStatus.OK);
+        }else{
+            return new  ResponseEntity<>(ApiResponse.success(null), HttpStatus.OK);
+        }
 
     }
 

@@ -11,7 +11,7 @@ import com.profect.delivery.global.entity.CartItem;
 import com.profect.delivery.global.exception.InvalidUuidFormatException;
 import com.profect.delivery.global.exception.NotFoundException;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -132,17 +132,21 @@ public class CartService {
     }
 
     @Transactional
-    public void updateCartItem(UUID cartItemId, List<AddCartDto> addCartList) {
+    public boolean updateCartItem(UUID cartItemId, List<AddCartDto> addCartList, String userId) {
         CartItem cartItem = cartItemRepository.findById(cartItemId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 CartItem이 존재하지 않습니다."));
 
-        // 예시: 첫 번째 AddCartDto로만 수정 (단일 아이템 수정 기준)
-        AddCartDto dto = addCartList.get(0);
-        cartItem.setMenuId(UUID.fromString(dto.getMenuId()));
-        cartItem.setQuantity(Integer.parseInt(dto.getQuantity()));
-        cartItem.setUpdatedAt(LocalDateTime.now());
-        cartItem.setUpdatedBy("user001"); // 유저아이디 넣기
-
+        try{
+            for (AddCartDto dto : addCartList) {
+                cartItem.setMenuId(UUID.fromString(dto.getMenuId()));
+                cartItem.setQuantity(Integer.parseInt(dto.getQuantity()));
+                cartItem.setUpdatedAt(LocalDateTime.now());
+            }
+        } catch (Exception e) {
+            return false;
+        }
         // JPA는 영속 상태라 save 호출 없이도 트랜잭션 끝나면 자동 반영됨
+
+        return true;
     }
 }
