@@ -17,7 +17,8 @@ jobs:
           distribution: 'temurin'
 
       - name: Build with Gradle
-        run: ./gradlew build --exclude-task test
+        run: ./gradlew build
+#        --exclude-task test
 
       - name: Upload JAR file
         uses: actions/upload-artifact@v4

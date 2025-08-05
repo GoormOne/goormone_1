@@ -8,7 +8,8 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum BusinessErrorCode implements DefaultErrorCode {
 
-
+    FAIL_TO_UPDATE(HttpStatus.INTERNAL_SERVER_ERROR, "업데이트에 실패하였습니다."),
+    FAIL_TO_SAVE(HttpStatus.NOT_ACCEPTABLE, "저장에 실패하였습니다."),
     ALREADY_DELETED(HttpStatus.GONE, "이미 삭제된 정보입니다."),
     NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 정보입니다."),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR , "서버 내부 오류입니다."),

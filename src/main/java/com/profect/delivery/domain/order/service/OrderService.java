@@ -3,6 +3,8 @@ package com.profect.delivery.domain.order.service;
 import com.profect.delivery.domain.order.repository.OrderItemRepository;
 import com.profect.delivery.domain.order.repository.OrderRepository;
 import com.profect.delivery.global.entity.Order;
+import com.profect.delivery.global.exception.BusinessException;
+import com.profect.delivery.global.exception.custom.OrderErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,7 +26,7 @@ public class OrderService {
 
     public Order findOrder(String orderId){
         return orderRepository.findById(UUID.fromString(orderId))
-                .orElseThrow(() -> new RuntimeException("주문 없음"));
+                .orElseThrow(() -> new BusinessException(OrderErrorCode.NOT_FOUND_ORDER));
     }
 
 }
