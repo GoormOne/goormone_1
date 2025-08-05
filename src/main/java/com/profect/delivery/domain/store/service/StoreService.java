@@ -71,7 +71,7 @@ public class StoreService {
 
 
         StoreCategory storeCategory = storeCategoryRepository.findByStoresCategory(storeRegisterDto.getCategory())
-                .orElseThrow(() -> new RuntimeException("매장 카테고리를 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(BusinessErrorCode.NOT_FOUND_CATEGORY) );
 
         String dummyUserId = "U000000004";
         Store store = Store.builder()
