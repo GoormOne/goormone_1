@@ -9,6 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {//이 구조가 일반적
-  Optional<User> findByUserId(String UserId);
+  User findByUserId(String UserId);
 
 }
