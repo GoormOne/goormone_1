@@ -57,7 +57,7 @@ public class CartController {
             @PathVariable String storeId
     ) throws Exception {
         //model 전달
-        String userId = "user001";
+        String userId = "U000000011";
 
         UUID cartId = cartService.saveCart(addCartDtoList, userId, storeId);
 
@@ -130,7 +130,7 @@ public class CartController {
             @PathVariable String cartItemId,
             @RequestBody List<AddCartDto> addCartList) {
 
-        String userId = "user001"; // TODO: 실제 인증된 사용자 정보로 대체 필요
+        String userId = "U000000011"; // TODO: 실제 인증된 사용자 정보로 대체 필요
 
         if (addCartList == null || addCartList.isEmpty()) {
             throw new BusinessException(BusinessErrorCode.NOT_FOUND);
