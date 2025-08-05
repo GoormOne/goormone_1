@@ -4,6 +4,8 @@ import com.profect.delivery.domain.users.dto.UserAddressesRequestDto;
 import com.profect.delivery.domain.users.dto.UserAddressesResponseDto;
 import com.profect.delivery.domain.users.repository.UserAdressRepository;
 import com.profect.delivery.global.entity.UserAddress;
+import com.profect.delivery.global.exception.BusinessException;
+import com.profect.delivery.global.exception.custom.UserErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +28,7 @@ public class UserAddressService {
     public List<UserAddressesResponseDto> findByUserId(String userId) {
         // 1. Repository를 통해 주소 엔티티 목록을 조회합니다.
         List<UserAddress> addresses = userAddressRepository.findByUserId(userId);
-        if (addresses.isEmpty()) {
-            //예외 처리
-        }
+
         return addresses.stream()
                 .map(UserAddressesResponseDto::fromEntity)
                 .collect(Collectors.toList());
@@ -36,6 +36,7 @@ public class UserAddressService {
 
     public void CreateUserAddress(UserAddressesRequestDto userAddressDto,String UserId) {
         UserAddress userAddress = userAddressDto.toEntity(UserId);
+
         userAddressRepository.save(userAddress);
     }
 }
