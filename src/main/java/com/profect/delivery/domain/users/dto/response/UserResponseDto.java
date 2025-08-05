@@ -1,4 +1,4 @@
-package com.profect.delivery.domain.users.dto;
+package com.profect.delivery.domain.users.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.profect.delivery.global.entity.Role;
@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
-import java.util.Optional;
 
 @Data//getter setter
 @NoArgsConstructor//유효성 검사 해야함

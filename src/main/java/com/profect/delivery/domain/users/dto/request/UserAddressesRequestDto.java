@@ -1,4 +1,4 @@
-package com.profect.delivery.domain.users.dto;
+package com.profect.delivery.domain.users.dto.request;
 
 import com.profect.delivery.global.entity.UserAddress;
 import lombok.Data;
@@ -6,15 +6,12 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 public class UserAddressesRequestDto {
-
 
     private String address_name;
     private String address1;

@@ -1,76 +1,76 @@
 package com.profect.delivery.domain.users.service;
 
-import com.profect.delivery.domain.users.dto.UserResponseDto;
-import com.profect.delivery.domain.users.dto.UserUpdateRequestDto;
+import com.profect.delivery.domain.users.dto.request.LoginRequestDto;
+import com.profect.delivery.domain.users.dto.response.UserResponseDto;
+import com.profect.delivery.domain.users.dto.request.UserUpdateRequestDto;
+import com.profect.delivery.domain.users.dto.request.SignupRequestDto;
+import com.profect.delivery.domain.users.dto.UserInfoDto;
 import com.profect.delivery.domain.users.repository.UserRepository;
+import com.profect.delivery.global.dto.TokenInfo;
 import com.profect.delivery.global.exception.BusinessException;
-import com.profect.delivery.global.exception.UserNotFoundException;
 import com.profect.delivery.global.entity.User;
-import com.profect.delivery.global.exception.custom.UserErrorCode;
+import com.profect.delivery.global.exception.custom.AuthErrorCode;
+import com.profect.delivery.global.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
-@RequiredArgsConstructor//생성자 자동 주입
+@RequiredArgsConstructor
 @Slf4j
-public class UserService{//비즈니스 로직
+public class UserService {
     private final UserRepository userRepository;
-
-
-
+    private final JwtTokenProvider jwtTokenProvider;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional(readOnly = true)
-    public UserResponseDto getUserById(String UserId) {
-            User user=userRepository.findByUserId(UserId);
-            if(user==null){
-                throw new BusinessException(UserErrorCode.NOT_FOUND_USER);
-            }
-            //예외 처리 작성
-
+    public UserResponseDto getUserById(String userId) {
+        User user = userRepository.findByUserId(userId);
+        if (user == null) {
+            throw new BusinessException(AuthErrorCode.NOT_FOUND_USER);
+        }
         return UserResponseDto.fromEntity(user);
     }
 
-
-    public void updateUser(UserUpdateRequestDto userUpdateRequestDto, String UserId, String UpdatedBy) {
-        User user=userRepository.findByUserId(UserId);
-        if(user==null){
-            throw new BusinessException(UserErrorCode.NOT_FOUND_USER);
-        }//찾는 유저가 없으면 예왜ㅣ처리
-
-
-        user.update(userUpdateRequestDto.getName(),
-                userUpdateRequestDto.getPassword(),
-                userUpdateRequestDto.getEmail(),
-                userUpdateRequestDto.getIs_public(),
-                UpdatedBy
+    @Transactional
+    public void updateUser(UserUpdateRequestDto userUpdateRequestDto, String userId, String updatedBy) {
+        User user = userRepository.findByUserId(userId);
+        if (user == null) {
+            throw new BusinessException(AuthErrorCode.NOT_FOUND_USER);
+        }
+        
+        user.update(
+            userUpdateRequestDto.getName(),
+            userUpdateRequestDto.getPassword(),
+            userUpdateRequestDto.getEmail(),
+            userUpdateRequestDto.getIs_public(),
+            updatedBy
         );
         userRepository.save(user);
-        log.info("Updated user id {}",user);
+        log.info("Updated user id: {}", user.getUserId());
     }
 
     @Transactional(readOnly = true)
     public User findByUsername(String username) {
         return userRepository.findByUsername(username)
-            .orElseThrow(() -> new UserNotFoundException("User not found with username: " + username));
+            .orElseThrow(() -> new BusinessException(AuthErrorCode.NOT_FOUND_USER));
     }
 
     @Transactional
-    public void createUser(com.profect.delivery.domain.auth.AuthController.SignupRequest request, String encodedPassword) {
+    public String createUser(SignupRequestDto request) {
         if (userRepository.findByUsername(request.username()).isPresent()) {
-            throw new RuntimeException("Username already exists");
+            throw new BusinessException(AuthErrorCode.DUPLICATE_USERNAME);
         }
         if (userRepository.findByEmail(request.email()).isPresent()) {
-            throw new RuntimeException("Email already exists");
+            throw new BusinessException(AuthErrorCode.DUPLICATE_EMAIL);
         }
         
         User user = new User();
         user.setUserId(java.util.UUID.randomUUID().toString().replace("-", "").substring(0, 10));
         user.setUsername(request.username());
-        user.setPassword(encodedPassword);
+        user.setPassword(passwordEncoder.encode(request.password()));
         user.setName(request.name());
         user.setBirth(java.sql.Date.valueOf(request.birth()));
         user.setEmail(request.email());
@@ -82,18 +82,44 @@ public class UserService{//비즈니스 로직
         
         userRepository.save(user);
         log.info("Created new user: {}", user.getUsername());
+        return "User created successfully";
     }
 
     @Transactional
-    public void softDeleteUser(String username) {
+    public String softDeleteUser(String username) {
         User user = userRepository.findByUsername(username)
-            .orElseThrow(() -> new UserNotFoundException("User not found with username: " + username));
+            .orElseThrow(() -> new BusinessException(AuthErrorCode.NOT_FOUND_USER));
         
         user.setDeletedAt(java.sql.Timestamp.valueOf(java.time.LocalDateTime.now()));
         user.setDeletedBy(username);
         
         userRepository.save(user);
         log.info("Soft deleted user: {}", username);
+        return "User withdrawn successfully";
     }
-
+    
+    @Transactional
+    public TokenInfo login(LoginRequestDto request) {
+        User user = findByUsername(request.username());
+        
+        if (!passwordEncoder.matches(request.password(), user.getPassword())) {
+            throw new BusinessException(AuthErrorCode.INVALID_CREDENTIALS);
+        }
+        
+        org.springframework.security.authentication.UsernamePasswordAuthenticationToken authToken = 
+            new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
+                user.getUsername(), null, 
+                java.util.List.of(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
+            );
+        
+        TokenInfo tokenInfo = jwtTokenProvider.generateToken(authToken);
+        log.info("Login successful for user: {}", user.getUsername());
+        return tokenInfo;
+    }
+    
+    @Transactional(readOnly = true)
+    public UserInfoDto getCurrentUser(String username) {
+        User user = findByUsername(username);
+        return new UserInfoDto(user.getUsername(), user.getRole(), user.getName(), user.getEmail());
+    }
 }

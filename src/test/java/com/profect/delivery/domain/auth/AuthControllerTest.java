@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.profect.delivery.domain.users.service.UserService;
 import com.profect.delivery.global.entity.Role;
 import com.profect.delivery.global.entity.User;
-import com.profect.delivery.global.security.JwtUtil;
+import com.profect.delivery.global.security.JwtTokenProvider;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -30,7 +30,7 @@ class AuthControllerTest {
     private UserService userService;
 
     @MockBean
-    private JwtUtil jwtUtil;
+    private JwtTokenProvider jwtTokenProvider;
 
     @MockBean
     private PasswordEncoder passwordEncoder;
@@ -45,7 +45,7 @@ class AuthControllerTest {
 
         when(userService.findByUsername("testuser")).thenReturn(user);
         when(passwordEncoder.matches("password", "encodedPassword")).thenReturn(true);
-        when(jwtUtil.generateToken("testuser", Role.CUSTOMER)).thenReturn("jwt-token");
+        when(jwtTokenProvider.generateToken("testuser", Role.CUSTOMER)).thenReturn("jwt-token");
 
         AuthController.LoginRequest request = new AuthController.LoginRequest("testuser", "password");
 

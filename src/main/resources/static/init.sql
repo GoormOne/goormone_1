@@ -204,7 +204,9 @@ CREATE TABLE "p_reviews" (
   "comment" text,
   "is_public" boolean NOT NULL,
   "created_at" timestamp(0) NOT NULL,
-  "created_by" varchar(10) NOT NULL
+  "created_by" varchar(10) NOT NULL,
+  "updated_at" timestamp(0),
+  "updated_by" varchar(10)
 );
 
 CREATE TABLE "p_review_summary" (

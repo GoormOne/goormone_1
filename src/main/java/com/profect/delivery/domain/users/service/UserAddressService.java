@@ -1,14 +1,11 @@
 package com.profect.delivery.domain.users.service;
 
-import com.profect.delivery.domain.users.dto.UserAddressesRequestDto;
-import com.profect.delivery.domain.users.dto.UserAddressesResponseDto;
+import com.profect.delivery.domain.users.dto.request.UserAddressesRequestDto;
+import com.profect.delivery.domain.users.dto.response.UserAddressesResponseDto;
 import com.profect.delivery.domain.users.repository.UserAdressRepository;
 import com.profect.delivery.global.entity.UserAddress;
-import com.profect.delivery.global.exception.BusinessException;
-import com.profect.delivery.global.exception.custom.UserErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

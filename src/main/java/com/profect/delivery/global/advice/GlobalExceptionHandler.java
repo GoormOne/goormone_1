@@ -23,7 +23,6 @@ public class GlobalExceptionHandler {
                 .status(e.getDefaultErrorCode().getHttpStatus())
                 .body(ApiResponse.fail(e.getDefaultErrorCode(), request.getRequestURI())); // 요청 경로 포함
     }
-
 }
 
 

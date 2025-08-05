@@ -13,7 +13,6 @@ import com.profect.delivery.global.entity.User;
 import com.profect.delivery.global.exception.custom.AuthErrorCode;
 import com.profect.delivery.global.exception.custom.BusinessErrorCode;
 import com.profect.delivery.global.exception.custom.ReviewErrorCode;
-import com.profect.delivery.global.exception.custom.UserErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -87,7 +86,7 @@ public class ReviewService {
 
     public void createReview(UUID storeId, ReviewRequestDto dto) {
         if (dto.getUserId() == null || dto.getUserId().isBlank()) {
-            throw new BusinessException(UserErrorCode.NOT_FOUND_USER);
+            throw new BusinessException(AuthErrorCode.NOT_FOUND_USER);
         }
 
         if (dto.getRating() < 1 || dto.getRating() > 5) {

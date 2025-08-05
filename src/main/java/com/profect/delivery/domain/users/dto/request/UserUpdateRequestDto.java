@@ -1,12 +1,10 @@
-package com.profect.delivery.domain.users.dto;
+package com.profect.delivery.domain.users.dto.request;
 
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.nio.file.FileStore;
 
 @Data
 @NoArgsConstructor

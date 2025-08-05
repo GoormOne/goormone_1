@@ -1,11 +1,8 @@
-package com.profect.delivery.domain.users.dto;
+package com.profect.delivery.domain.users.dto.response;
 
-import com.profect.delivery.global.entity.User;
 import com.profect.delivery.global.entity.UserAddress;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.math.BigDecimal;
 
 @Data
 @NoArgsConstructor

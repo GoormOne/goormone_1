@@ -26,6 +26,15 @@ public enum AuthErrorCode implements DefaultErrorCode {
 
     //404 error (NOT FOUND)
     NOT_FOUND_REFRESH_TOKEN(HttpStatus.NOT_FOUND , "존재하지 않는 리프레시 토큰입니다."),
+    NOT_FOUND_USER(HttpStatus.NOT_FOUND, "유저를 찾을 수 없습니다."),
+    NOT_FOUND_ADDRESS(HttpStatus.NOT_FOUND, "주소를 찾을 수 없습니다."),
+    
+    //409 error (CONFLICT)
+    DUPLICATE_USERNAME(HttpStatus.CONFLICT, "이미 존재하는 사용자명입니다."),
+    DUPLICATE_EMAIL(HttpStatus.CONFLICT, "이미 존재하는 이메일입니다."),
+    
+    //401 error (UNAUTHORIZED) - 추가
+    INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "잘못된 인증 정보입니다."),
     ;
     private final HttpStatus httpStatus;
     private final String message;

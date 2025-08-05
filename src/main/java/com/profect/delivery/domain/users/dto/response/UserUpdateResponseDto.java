@@ -1,4 +1,4 @@
-package com.profect.delivery.domain.users.dto;
+package com.profect.delivery.domain.users.dto.response;
 
 
 import lombok.Data;
