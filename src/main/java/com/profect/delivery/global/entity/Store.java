@@ -1,7 +1,9 @@
 package com.profect.delivery.global.entity;
 
 import jakarta.persistence.*;
+import jakarta.persistence.Table;
 import lombok.*;
+
 import org.springframework.data.annotation.CreatedBy;
 
 import java.math.BigDecimal;

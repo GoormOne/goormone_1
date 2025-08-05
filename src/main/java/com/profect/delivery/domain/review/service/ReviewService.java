@@ -6,6 +6,11 @@ import com.profect.delivery.domain.review.dto.ReviewRequestDto;
 import com.profect.delivery.domain.review.repository.ReviewRepository;
 import com.profect.delivery.global.dto.ErrorResponse;
 import com.profect.delivery.global.entity.Review;
+import com.profect.delivery.global.exception.BusinessException;
+import com.profect.delivery.global.exception.custom.AuthErrorCode;
+import com.profect.delivery.global.exception.custom.BusinessErrorCode;
+import com.profect.delivery.global.exception.custom.ReviewErrorCode;
+import com.profect.delivery.global.exception.custom.UserErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,10 +73,22 @@ public class ReviewService {
     }
 
     // 리뷰 한개 조회
-    @Transactional(readOnly = true)
+//    @Transactional(readOnly = true)
+//    public ReviewResponseDto getReviewByStoreIdAndReviewId(UUID storeId, UUID reviewId) {
+//        Review review = reviewRepository.findByStoreIdAndReviewId(storeId, reviewId)
+//                .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
+//
+//        return ReviewResponseDto.builder()
+//                .reviewId(review.getReviewId())
+//                .userId(review.getUserId())
+//                .createdAt(review.getCreatedAt().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+//                .rating(review.getRating())
+//                .comment(review.getComment())
+//                .build();
+//    }
     public ReviewResponseDto getReviewByStoreIdAndReviewId(UUID storeId, UUID reviewId) {
         Review review = reviewRepository.findByStoreIdAndReviewId(storeId, reviewId)
-                .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ReviewErrorCode.NOT_FOUND_REVIEW));
 
         return ReviewResponseDto.builder()
                 .reviewId(review.getReviewId())
@@ -82,24 +99,42 @@ public class ReviewService {
                 .build();
     }
 
+//    public void createReview(UUID storeId, ReviewRequestDto dto) {
+//        // storeName은 기존 리뷰에서 참조하거나 기본값 사용
+//
+//        Review review = Review.builder()
+////                .reviewId(UUID.randomUUID())  //
+//                .storeId(storeId)
+//                //.storeName(storeName)
+//                .userId(dto.getUserId())
+//                .rating(dto.getRating())
+//                .comment(dto.getComment())
+//                .createdAt(LocalDateTime.now())
+//                .createdBy(dto.getUserId())
+////                .isPublic(true)
+//                .build();
+//
+//        reviewRepository.save(review);
+public void createReview(UUID storeId, ReviewRequestDto dto) {
+    if (dto.getUserId() == null || dto.getUserId().isBlank()) {
+        throw new BusinessException(UserErrorCode.NOT_FOUND_USER);
+    }
 
-    public void createReview(UUID storeId, ReviewRequestDto dto) {
-        // storeName은 기존 리뷰에서 참조하거나 기본값 사용
+    if (dto.getRating() < 1 || dto.getRating() > 5) {
+        throw new BusinessException(BusinessErrorCode.CALCULATION_ERROR);
+    }
 
-        Review review = Review.builder()
-//                .reviewId(UUID.randomUUID())  //
-                .storeId(storeId)
-                //.storeName(storeName)
-                .userId(dto.getUserId())
-                .rating(dto.getRating())
-                .comment(dto.getComment())
-                .createdAt(LocalDateTime.now())
-                .createdBy(dto.getUserId())
-//                .isPublic(true)
-                .build();
+    Review review = Review.builder()
+            .storeId(storeId)
+            .userId(dto.getUserId())
+            .rating(dto.getRating())
+            .comment(dto.getComment())
+            .createdAt(LocalDateTime.now())
+            .createdBy(dto.getUserId())
+            .build();
 
-        reviewRepository.save(review);
-
+    reviewRepository.save(review);
+}
 //        // 평균 평점 갱신
 //        reviewAverageRepository.findByStoreId(storeId).ifPresentOrElse(
 //                avg -> {
@@ -112,7 +147,7 @@ public class ReviewService {
 //                    reviewAverageRepository.save(newAvg);
 //                }
 //        );
-    }
+
 
 
 //    public void deleteReview(UUID storeId, UUID reviewId) {
@@ -123,33 +158,60 @@ public class ReviewService {
 //        reviewRepository.deleteByStoreIdAndReviewId(storeId, reviewId);
 //    }
 
-    public String deleteReview(UUID storeId, UUID reviewId) {
+//    public String deleteReview(UUID storeId, UUID reviewId) {
+//        Review review = reviewRepository.findByStoreIdAndReviewId(storeId, reviewId)
+//                .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
+//
+//        review.setIsPublic(false);  // 실제 삭제가 아닌 soft delete
+//        review.setUpdatedAt(LocalDateTime.now());
+//
+//        reviewRepository.save(review); // 저장만 하면 soft delete 완료
+//        return "리뷰가 삭제되었습니다.";
+//    }
+
+    public void deleteReview(UUID storeId, UUID reviewId) {
         Review review = reviewRepository.findByStoreIdAndReviewId(storeId, reviewId)
-                .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ReviewErrorCode.NOT_FOUND_REVIEW));
 
         review.setIsPublic(false);  // 실제 삭제가 아닌 soft delete
         review.setUpdatedAt(LocalDateTime.now());
 
-        reviewRepository.save(review); // 저장만 하면 soft delete 완료
-        return "리뷰가 삭제되었습니다.";
+        reviewRepository.save(review);
     }
 
-    public void updateReview(UUID storeId, UUID reviewId, ReviewRequestDto dto) {
-        Review review = reviewRepository.findByStoreIdAndReviewId(storeId, reviewId)
-                .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
+//    public void updateReview(UUID storeId, UUID reviewId, ReviewRequestDto dto) {
+//        Review review = reviewRepository.findByStoreIdAndReviewId(storeId, reviewId)
+//                .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
+//
+//        review.setRating(dto.getRating());
+//        review.setComment(dto.getComment());
+//        review.setUpdatedAt(LocalDateTime.now());
+//        review.setUpdatedBy(dto.getUserId());
+//
+//        // 권한 있는 사용자만 공개 여부 변경 허용
+//        if (isAuthorizedToChangeVisibility(dto.getUserId())) {
+//            review.setIsPublic(dto.getIsPublic() != null ? dto.getIsPublic() : true);
+//        }
+//
+//        // save 호출 안 해도 됨: JPA가 @Transactional 안에서 변경 감지(dirty checking)
+//    }
+public void updateReview(UUID storeId, UUID reviewId, ReviewRequestDto dto) {
+    Review review = reviewRepository.findByStoreIdAndReviewId(storeId, reviewId)
+            .orElseThrow(() -> new BusinessException(ReviewErrorCode.NOT_FOUND_REVIEW));
 
-        review.setRating(dto.getRating());
-        review.setComment(dto.getComment());
-        review.setUpdatedAt(LocalDateTime.now());
-        review.setUpdatedBy(dto.getUserId());
+    review.setRating(dto.getRating());
+    review.setComment(dto.getComment());
+    review.setUpdatedAt(LocalDateTime.now());
+    review.setUpdatedBy(dto.getUserId());
 
-        // 권한 있는 사용자만 공개 여부 변경 허용
-        if (isAuthorizedToChangeVisibility(dto.getUserId())) {
-            review.setIsPublic(dto.getIsPublic() != null ? dto.getIsPublic() : true);
+    // 권한 있는 사용자만 공개 여부 변경 허용
+    if (dto.getIsPublic() != null) {
+        if (!isAuthorizedToChangeVisibility(dto.getUserId())) {
+            throw new BusinessException(AuthErrorCode.UNAUTHORIZED);
         }
-
-        // save 호출 안 해도 됨: JPA가 @Transactional 안에서 변경 감지(dirty checking)
+        review.setIsPublic(dto.getIsPublic());
     }
+}
 
     private boolean isAuthorizedToChangeVisibility(String userId) {
         // 예: 관리자 또는 특정 접두어 가진 사용자만 가능
