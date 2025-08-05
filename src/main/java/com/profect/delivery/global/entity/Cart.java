@@ -14,8 +14,10 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString(exclude = "cartItems")
 public class Cart {
+    public Cart(UUID cartUuid) {
+        this.cartId = cartUuid;
+    }
 
     @Id
     @GeneratedValue
