@@ -11,7 +11,6 @@ import com.profect.delivery.domain.menu.service.MenuService;
 import com.profect.delivery.global.entity.Role;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -99,7 +98,7 @@ public class MenuController {
     public ResponseEntity<ApiResponse<CreateMenuResponse>> createMenu(
             @PathVariable UUID storeId,
             @Valid @RequestBody CreateMenuRequest dto,
-            @RequestHeader("username") String username) {
+            @ModelAttribute("currentUsername") String username) {
 
         CreateMenuResponse res = menuService.createMenu(storeId, dto, username);
         return ResponseEntity
@@ -112,7 +111,7 @@ public class MenuController {
             @PathVariable UUID storeId,
             @PathVariable UUID menuId,
             @Valid @RequestBody UpdateMenuRequest dto,
-            @RequestHeader("username") String username) {
+            @ModelAttribute("currentUsername") String username) {
 
         UpdateMenuResponse res = menuService.updateMenu(storeId, menuId, dto, username);
         return ResponseEntity.ok(ApiResponse.success(res));
@@ -122,10 +121,10 @@ public class MenuController {
     public ResponseEntity<Void> deleteMenu(
             @PathVariable UUID storeId,
             @PathVariable UUID menuId,
-            @RequestHeader("username") String username) {
+            @ModelAttribute("currentUsername") String username) {
 
         menuService.deleteMenu(storeId, menuId, username);
-        return ResponseEntity.noContent().build(); // 204 No Content
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping
@@ -133,7 +132,7 @@ public class MenuController {
             @PathVariable UUID storeId,
             @RequestParam(required = false) UUID menuCategoryId,
             @PageableDefault(size = 20) Pageable pageable,
-            @RequestHeader("role") Role role) {
+            @ModelAttribute("currentRole") Role role) {
 
         MenuCategoriesResponse response = menuService.listMenusByCategory(storeId, menuCategoryId, pageable, role);
         return ResponseEntity.ok(ApiResponse.success(response));

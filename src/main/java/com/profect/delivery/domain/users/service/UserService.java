@@ -36,8 +36,50 @@ public class UserService{//비즈니스 로직
         );
         userRepository.save(user);
         log.info("Updated user id {}",user);
-
     }
 
+    @Transactional(readOnly = true)
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username)
+            .orElseThrow(() -> new UserNotFoundException("User not found with username: " + username));
+    }
+
+    @Transactional
+    public void createUser(com.profect.delivery.domain.auth.AuthController.SignupRequest request, String encodedPassword) {
+        if (userRepository.findByUsername(request.username()).isPresent()) {
+            throw new RuntimeException("Username already exists");
+        }
+        if (userRepository.findByEmail(request.email()).isPresent()) {
+            throw new RuntimeException("Email already exists");
+        }
+        
+        User user = new User();
+        user.setUserId(java.util.UUID.randomUUID().toString().replace("-", "").substring(0, 10));
+        user.setUsername(request.username());
+        user.setPassword(encodedPassword);
+        user.setName(request.name());
+        user.setBirth(java.sql.Date.valueOf(request.birth()));
+        user.setEmail(request.email());
+        user.setRole(request.role());
+        user.setPublic(true);
+        user.setBanned(false);
+        user.setCreatedAt(java.sql.Timestamp.valueOf(java.time.LocalDateTime.now()));
+        user.setCreatedBy("SYSTEM");
+        
+        userRepository.save(user);
+        log.info("Created new user: {}", user.getUsername());
+    }
+
+    @Transactional
+    public void softDeleteUser(String username) {
+        User user = userRepository.findByUsername(username)
+            .orElseThrow(() -> new UserNotFoundException("User not found with username: " + username));
+        
+        user.setDeletedAt(java.sql.Timestamp.valueOf(java.time.LocalDateTime.now()));
+        user.setDeletedBy(username);
+        
+        userRepository.save(user);
+        log.info("Soft deleted user: {}", username);
+    }
 
 }

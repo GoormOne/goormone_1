@@ -9,6 +9,7 @@ import com.profect.delivery.global.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,8 +26,7 @@ import java.util.stream.Collectors;
 
 
         @GetMapping
-        public ResponseEntity<ApiResponse<UserResponseDto>> getUser() {
-            String currentUserId = "U000000001";//인증인가 가져오면 유저 id 추출
+        public ResponseEntity<ApiResponse<UserResponseDto>> getUser(@ModelAttribute("currentUsername") String currentUserId) {
 
             return userService.getUserById(currentUserId)
                     .map(UserResponseDto::fromEntity) // Entity를 DTO로 변환
@@ -38,10 +38,10 @@ import java.util.stream.Collectors;
 
     @PatchMapping
         public ResponseEntity<ApiResponse<?>> patchUser(
-                @RequestBody UserUpdateRequestDto userUpdateRequestDto) {
+                @RequestBody UserUpdateRequestDto userUpdateRequestDto,
+                @ModelAttribute("currentUsername") String currentUserId) {
 
-            String currentUserId = "U000000001";//인증인가에서 가져온 유저 id
-            String updateby="admin";//인증인가에서 가져온 업데이트한 사람
+            String updateby = currentUserId;
 
             userService.updateUser(userUpdateRequestDto,currentUserId,updateby);
 
@@ -52,8 +52,7 @@ import java.util.stream.Collectors;
 
 
         @GetMapping("/addresses")
-        public ResponseEntity<ApiResponse<List<UserAddressesResponseDto>>> getUserAddresses() {
-            String currentUserId = "U000000001";
+        public ResponseEntity<ApiResponse<List<UserAddressesResponseDto>>> getUserAddresses(@ModelAttribute("currentUsername") String currentUserId) {
 
             List<UserAddressesResponseDto> addresses = userAddressService.findByUserId(currentUserId).stream()
                     .map(UserAddressesResponseDto::fromEntity) // 각 엔티티를 DTO로 변환
@@ -66,9 +65,8 @@ import java.util.stream.Collectors;
 
         @PostMapping("/addresses")
         public ResponseEntity<ApiResponse<?>> postUserAddressses(
-                @RequestBody UserAddressesRequestDto userAddressesRequestDto) {
-
-            String currentUserId = "U000000001";
+                @RequestBody UserAddressesRequestDto userAddressesRequestDto,
+                @ModelAttribute("currentUsername") String currentUserId) {
 
             userAddressService.CreateUserAddress(userAddressesRequestDto,currentUserId);
 

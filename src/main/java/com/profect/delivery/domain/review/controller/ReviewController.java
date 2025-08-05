@@ -7,6 +7,7 @@ import com.profect.delivery.domain.review.dto.ReviewRequestDto;
 import com.profect.delivery.global.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import com.profect.delivery.global.dto.ErrorResponse;
@@ -37,9 +38,8 @@ public class ReviewController {
             ReviewResponseDto dto = reviewService.getReviewByStoreIdAndReviewId(storeId, reviewId);
             return ResponseEntity.ok(ApiResponse.success(dto));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(ApiResponse.failure(
-                    new ErrorResponse(400, e.getMessage(), "/reviews/" + storeId, LocalDateTime.now()
-            )));
+            ErrorResponse error = ErrorResponse.of(400, e.getMessage(), "/reviews/" + storeId);
+            return ResponseEntity.badRequest().body(ApiResponse.failure(error));
         }
     }
 
@@ -48,7 +48,8 @@ public class ReviewController {
     @PostMapping("/{storeId}")
     public ResponseEntity<ApiResponse<String>> createReview(
             @PathVariable UUID storeId,
-            @RequestBody ReviewRequestDto request
+            @RequestBody ReviewRequestDto request,
+            @ModelAttribute("currentUsername") String username
     ) {
         reviewService.createReview(storeId, request);
         return ResponseEntity.ok(ApiResponse.success("리뷰가 성공적으로 등록되었습니다."));
@@ -78,18 +79,14 @@ public class ReviewController {
     @DeleteMapping("/{storeId}")
     public ResponseEntity<ApiResponse<String>> deleteReview(
             @PathVariable UUID storeId,
-            @RequestParam("review_id") UUID reviewId
+            @RequestParam("review_id") UUID reviewId,
+            @ModelAttribute("currentUsername") String username
     ) {
         try {
             String message = reviewService.deleteReview(storeId, reviewId);
             return ResponseEntity.ok(ApiResponse.success(message));
         } catch (IllegalArgumentException e) {
-            ErrorResponse error = new ErrorResponse(
-                    40000,
-                    e.getMessage(),
-                    "/reviews/" + storeId,
-                    LocalDateTime.now()
-            );
+            ErrorResponse error = ErrorResponse.of(40000, e.getMessage(), "/reviews/" + storeId);
             return ResponseEntity.badRequest().body(ApiResponse.failure(error));
         }
     }
@@ -102,21 +99,15 @@ public class ReviewController {
     public ResponseEntity<ApiResponse<String>> updateReview(
             @PathVariable UUID storeId,
             @RequestParam("review_id") UUID reviewId,
-            @RequestBody ReviewRequestDto request
+            @RequestBody ReviewRequestDto request,
+            @ModelAttribute("currentUsername") String username
     ) {
         try {
             reviewService.updateReview(storeId, reviewId, request);
             return ResponseEntity.ok(ApiResponse.success("리뷰가 수정되었습니다."));
         } catch (IllegalArgumentException e) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(ApiResponse.failure(
-                            new ErrorResponse(
-                                    400,
-                                    e.getMessage(),
-                                    "/reviews/" + storeId,
-                                    LocalDateTime.now()
-                            )));
+            ErrorResponse error = ErrorResponse.of(400, e.getMessage(), "/reviews/" + storeId);
+            return ResponseEntity.badRequest().body(ApiResponse.failure(error));
         }
     }
 }

@@ -25,7 +25,7 @@ CREATE TYPE "payment_result" AS ENUM (
 CREATE TABLE "p_users" (
   "user_id" varchar(10) NOT NULL PRIMARY KEY,
   "username" varchar(10) UNIQUE NOT NULL,
-  "password" varchar(15) NOT NULL,
+  "password" varchar(60) NOT NULL,
   "name" varchar(10) NOT NULL,
   "birth" date NOT NULL,
   "email" varchar(30) UNIQUE NOT NULL,

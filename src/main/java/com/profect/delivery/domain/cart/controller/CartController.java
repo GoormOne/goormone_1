@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,9 +30,7 @@ public class CartController {
 
 
     @GetMapping()
-    public ResponseEntity<ApiResponse<CartInfoDto>> getCart(){
-        //ControllerAdvice에서 model로 받기
-        String userId = "user011";
+    public ResponseEntity<ApiResponse<CartInfoDto>> getCart(@ModelAttribute("currentUsername") String userId){
 
 
         log.info("userId={}",userId);
@@ -48,10 +47,9 @@ public class CartController {
     @PostMapping("/{storeId}")
     public ResponseEntity<ApiResponse> createUser(
             @RequestBody List<AddCartDto> addCartDtoList,
-            @PathVariable String storeId
+            @PathVariable String storeId,
+            @ModelAttribute("currentUsername") String userId
     ){
-        //model 전달
-        String userId = "user001";
         log.info("storeId={}", storeId);
 
         UUID cartId = cartService.saveCart(addCartDtoList, userId, storeId);

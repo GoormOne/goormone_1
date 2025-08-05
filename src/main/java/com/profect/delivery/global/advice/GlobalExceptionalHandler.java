@@ -21,8 +21,13 @@ public class GlobalExceptionalHandler {
     private final ErrorLogRepository errorLogRepository;
 
     private void saveErrorLog(Exception ex, HttpServletRequest request, int errorCode){
+        String userId = (String) request.getAttribute("username");
+        if (userId == null) {
+            userId = "anonymous";
+        }
+        
         ErrorEntity savedEntity = errorLogRepository.save(ErrorEntity.builder()
-                .userId("user001") // Jwt
+                .userId(userId)
                 .requestUrl(request.getRequestURI())
                 .httpMethod(request.getMethod())
                 .errorCode(String.valueOf(errorCode))
@@ -33,7 +38,6 @@ public class GlobalExceptionalHandler {
         );
 
         log.error("Error errorEntity={}", savedEntity.toString());
-
     }
 
     @ExceptionHandler(ConflictException.class)

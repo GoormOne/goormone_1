@@ -7,14 +7,14 @@ spring:
     name: sample-project
 
   datasource:
-    #    url: jdbc:postgresql://localhost:5432/sample
-    #    driver-class-name: org.postgresql.Driver
-    #    username: user
-    #    password: password
-    url: jdbc:postgresql://43.200.244.12:5432/sample
-    driver-class-name: org.postgresql.Driver
-    username: postgres
-    password: password
+        url: jdbc:postgresql://localhost:5432/sample
+        driver-class-name: org.postgresql.Driver
+        username: user
+        password: password
+#    url: jdbc:postgresql://43.200.244.12:5432/sample
+#    driver-class-name: org.postgresql.Driver
+#    username: postgres
+#    password: password
 
   jpa:
     hibernate:
@@ -35,3 +35,12 @@ spring:
     time-zone: Asia/Seoul
     serialization:
       write-dates-as-timestamps: false
+
+jwt:
+  secret: dGhpc0lzQVZlcnlTZWN1cmVTZWNyZXRLZXlGb3JKV1RUb2tlbkdlbmVyYXRpb25UaGF0SXNMb25nRW5vdWdoQW5kUmFuZG9t
+  expiration: 86400000  # 24 hours in milliseconds (1000 * 60 * 60 * 24)
+
+logging:
+  level:
+    com.profect.delivery.global.security: DEBUG
+    org.springframework.security: DEBUG

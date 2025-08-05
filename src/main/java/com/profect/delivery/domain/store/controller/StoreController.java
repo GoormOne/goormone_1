@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,6 +33,7 @@ public class StoreController {
     @PostMapping
     public ResponseEntity<ApiResponse<StoreRegisterDto>> registerStore(
             @RequestBody @Valid final StoreRegisterDto dto,
+            @ModelAttribute("currentUsername") String username,
             HttpServletRequest request
     ) {
         try {
@@ -53,6 +55,7 @@ public class StoreController {
     @DeleteMapping("/{storeId}")
     public ResponseEntity<ApiResponse<String>> deleteStore(
             @PathVariable("storeId") String storeId,
+            @ModelAttribute("currentUsername") String username,
             HttpServletRequest request
     ) {
         if (storeService.deleteStore(storeId)) {
@@ -109,6 +112,7 @@ public class StoreController {
     public ResponseEntity<ApiResponse<List<UUID>>> registerStoreRegions(
             @PathVariable String storeId,
             @RequestBody final RegionListAddressDto regionListAddressDto,
+            @ModelAttribute("currentUsername") String username,
             HttpServletRequest request
     ) {
         try {
@@ -130,6 +134,7 @@ public class StoreController {
     public ResponseEntity<ApiResponse<List<UUID>>> deleteStoreRegions(
             @PathVariable String storeId,
             @RequestBody final RegionListAddressDto regionListAddressDto,
+            @ModelAttribute("currentUsername") String username,
             HttpServletRequest request
     ) {
         try {
