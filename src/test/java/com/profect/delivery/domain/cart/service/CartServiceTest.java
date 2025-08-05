@@ -46,10 +46,10 @@ class CartServiceTest {
     private CartService cartService;
 
     @BeforeEach
-    void setUp() {  // 생성자 주입
+    void setUp() {
         cartRepository = mock(CartRepository.class);
-        cartService = mock(CartService.class);
         cartItemRepository = mock(CartItemRepository.class);
+        cartService = new CartService(cartRepository, cartItemRepository);  // ✅ 실제 서비스 주입
     }
 
     @Test
@@ -105,6 +105,7 @@ class CartServiceTest {
         assertEquals(mockCart.getCartId(), result);
     }
 
+
     @Test
     void saveCart_잘못된_storeId_형식이면_예외발생() {
         // given
@@ -129,7 +130,7 @@ class CartServiceTest {
 
         // then
         assertTrue(result);
-        verify(cartItemRepository).deleteById(cartId);
+        verify(cartItemRepository).deleteByCart(any(Cart.class));
         verify(cartRepository).deleteById(cartId);
     }
 
