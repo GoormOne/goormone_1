@@ -24,7 +24,7 @@ bin/
 *.iml
 *.ipr
 out/
-*.DS_Store
+
 !**/src/main/**/out/
 !**/src/test/**/out/
 .idea/modules.xml
