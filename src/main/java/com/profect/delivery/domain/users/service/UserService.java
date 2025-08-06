@@ -6,16 +6,18 @@ import com.profect.delivery.domain.users.dto.request.UserUpdateRequestDto;
 import com.profect.delivery.domain.users.dto.request.SignupRequestDto;
 import com.profect.delivery.domain.users.dto.UserInfoDto;
 import com.profect.delivery.domain.users.repository.UserRepository;
-import com.profect.delivery.global.dto.TokenInfo;
+import com.profect.delivery.global.auth.jwt.JwtTokenProvider;
 import com.profect.delivery.global.exception.BusinessException;
 import com.profect.delivery.global.entity.User;
 import com.profect.delivery.global.exception.custom.AuthErrorCode;
-import com.profect.delivery.global.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -105,11 +107,11 @@ public class UserService {
         if (!passwordEncoder.matches(request.password(), user.getPassword())) {
             throw new BusinessException(AuthErrorCode.INVALID_CREDENTIALS);
         }
-        
-        org.springframework.security.authentication.UsernamePasswordAuthenticationToken authToken = 
-            new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
+
+        UsernamePasswordAuthenticationToken authToken =
+            new UsernamePasswordAuthenticationToken(
                 user.getUsername(), null, 
-                java.util.List.of(new org.springframework.security.core.authority.SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
+                List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
             );
         
         TokenInfo tokenInfo = jwtTokenProvider.generateToken(authToken);

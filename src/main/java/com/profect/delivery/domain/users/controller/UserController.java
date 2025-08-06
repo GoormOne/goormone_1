@@ -6,14 +6,10 @@ import com.profect.delivery.domain.users.dto.request.UserAddressesRequestDto;
 import com.profect.delivery.domain.users.dto.request.UserUpdateRequestDto;
 import com.profect.delivery.domain.users.dto.response.UserAddressesResponseDto;
 import com.profect.delivery.domain.users.dto.response.UserResponseDto;
-import com.profect.delivery.global.dto.TokenInfo;
 import com.profect.delivery.domain.users.dto.*;
 import com.profect.delivery.domain.users.service.UserAddressService;
 import com.profect.delivery.domain.users.service.UserService;
 import com.profect.delivery.global.dto.ApiResponse;
-import com.profect.delivery.global.exception.BusinessException;
-import com.profect.delivery.global.exception.custom.UserErrorCode;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,10 +18,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 
-    @RestController//컨트롤러 클래스에 붙이는,어노테이션 [rest api 컨트롤러]라는 뜻
+@RestController//컨트롤러 클래스에 붙이는,어노테이션 [rest api 컨트롤러]라는 뜻
     @RequestMapping("/users")//공통 url prefix 설정
     @RequiredArgsConstructor//자동 생성자,final 필드에 자동으로 스피링빈 객체 주입해줌
     public class UserController {

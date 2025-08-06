@@ -1,5 +1,8 @@
-package com.profect.delivery.global.security;
+package com.profect.delivery.global.auth.config;
 
+import com.profect.delivery.domain.users.repository.UserRepository;
+import com.profect.delivery.global.auth.jwt.JwtAuthenticationFilter;
+import com.profect.delivery.global.auth.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,48 +25,48 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    private final JwtTokenProvider jwtTokenProvider;
+    private final UserRepository userRepository;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(AbstractHttpConfigurer::disable)
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/users/login", "/users/signup").permitAll()
+                .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                .requestMatchers("/stores/*/menus/**").hasAnyRole("CUSTOMER", "OWNER", "MANAGER", "MASTER")
-                .requestMatchers("/stores/**").hasAnyRole("OWNER", "MANAGER", "MASTER")
-                .requestMatchers("/users/**").hasAnyRole("CUSTOMER", "OWNER", "MANAGER", "MASTER")
-                .requestMatchers("/cart/**").hasAnyRole("CUSTOMER", "OWNER", "MANAGER", "MASTER")
-                .requestMatchers("/reviews/**").hasAnyRole("CUSTOMER", "OWNER", "MANAGER", "MASTER")
+                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                .requestMatchers("/api/owner/**").hasRole("OWNER")
                 .anyRequest().authenticated()
             )
-            .exceptionHandling(exceptions -> exceptions
-                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-            )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
+        
         return http.build();
     }
-    
+
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter(jwtTokenProvider, userRepository);
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOriginPatterns(Arrays.asList("*"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
         
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 }

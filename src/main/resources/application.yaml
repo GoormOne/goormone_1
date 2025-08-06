@@ -39,8 +39,12 @@ spring:
       write-dates-as-timestamps: false
 
 jwt:
-  secret: dGhpc0lzQVZlcnlTZWN1cmVTZWNyZXRLZXlGb3JKV1RUb2tlbkdlbmVyYXRpb25UaGF0SXNMb25nRW5vdWdoQW5kUmFuZG9t
-  expiration: 86400000  # 24 hours in milliseconds (1000 * 60 * 60 * 24)
+#  secret: ${JWT_SECRET}
+  secret: 5OORB6y28xXu4WXSRyMUh_S8hMXVZtqrqvKxqNZeHxeX_iKZjJZ1dXOsCjp30M7EDAg0-1RAE331cg-b8GomvQ==
+  expiration: 900000
+#  refresh-secret: ${JWT_REFRESH_SECRET}
+  refresh-secret: OqYwklzc6LqeSKMi5viZ6SN2CPxn-QYt0jP5JXQC_OeqMIpc-4tPAVdp2Ee4V6o6OWbJFigAXRv_huCW-_OYqQ==
+  refresh-expiration: 604800000
 
 logging:
   level:
