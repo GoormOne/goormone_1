@@ -9,14 +9,18 @@ import com.profect.delivery.domain.store.repository.StoreRepository;
 import com.profect.delivery.global.entity.MenuCategory;
 import com.profect.delivery.global.entity.Role;
 import com.profect.delivery.global.entity.Store;
-import com.profect.delivery.global.exception.ConflictException;
-import com.profect.delivery.global.exception.NotFoundException;
+import com.profect.delivery.global.exception.BusinessException;
+
+
 import com.profect.delivery.domain.menu.dto.request.CreateMenuRequest;
 import com.profect.delivery.domain.menu.dto.response.CreateMenuResponse;
 import com.profect.delivery.domain.menu.dto.request.UpdateMenuRequest;
 import com.profect.delivery.domain.menu.dto.response.UpdateMenuResponse;
 import com.profect.delivery.global.entity.Menu;
 import com.profect.delivery.domain.menu.repository.MenuRepository;
+import com.profect.delivery.global.exception.custom.BusinessErrorCode;
+import com.profect.delivery.global.exception.custom.MenuErrorCode;
+import com.profect.delivery.global.exception.custom.StoreErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -43,19 +47,22 @@ public class MenuService {
 
         // Store 엔티티 조회
         Store store = storeRepository.findByStoreId(storeId)
-                .orElseThrow(() -> new NotFoundException("STORE NOT FOUND"));
+//                .orElseThrow(() -> new NotFoundException("STORE NOT FOUND"));
+                .orElseThrow(() -> new BusinessException(StoreErrorCode.NOT_FOUND_STORE));
 
         // 메뉴 카테고리 엔티티 조회
         MenuCategory menuCategory = null;
         if (reqDto.menuCategoryId() != null) {
             menuCategory = menuCategoryRepository.findByMenuCategoryId(reqDto.menuCategoryId())
-                    .orElseThrow(() -> new NotFoundException("MENU CATEGORY NOT FOUND"));
+//                    .orElseThrow(() -> new NotFoundException("MENU CATEGORY NOT FOUND"));
+                    .orElseThrow(() -> new BusinessException(StoreErrorCode.NOT_FOUND_STORE));
         }
 
         // 이름 중복 검사
         if (menuRepository.existsByStoreStoreIdAndMenuName(storeId, reqDto.menuName())) {
-            throw new ConflictException("DUPLICATED MENU NAME");
+            throw new BusinessException(BusinessErrorCode.ALREADY_EXISTS);
         }
+
 
         Menu menu = Menu.builder()
                         .store(store)
@@ -79,16 +86,16 @@ public class MenuService {
                                          String username) {
 
         Menu menu = menuRepository.findByStoreStoreIdAndMenuId(storeId, menuId)
-                .orElseThrow(() -> new NotFoundException("MENU NOT FOUND"));
+                .orElseThrow(() -> new BusinessException(MenuErrorCode.NOT_FOUND_MENU));
         // 동일 이름 중복 확인
         if (reqDto.menuName() != null && menuRepository.existsByStoreStoreIdAndMenuNameAndMenuIdNot(storeId, reqDto.menuName(), menuId)) {
-            throw new ConflictException("DUPLICATED MENU NAME");
+            throw new BusinessException(BusinessErrorCode.ALREADY_EXISTS);
         }
 
         // 엔티티 무결성을 위해 setter 사용 자제
         if (reqDto.menuCategoryId() != null) {
             MenuCategory newCat = menuCategoryRepository.findByMenuCategoryId(reqDto.menuCategoryId())
-                    .orElseThrow(() -> new NotFoundException("MENU CATEGORY NOT FOUND"));
+                    .orElseThrow(() -> new BusinessException(BusinessErrorCode.NOT_FOUND_CATEGORY));
             menu.changeCategory(newCat);
         }
         if (reqDto.menuName()        != null) menu.changeName(reqDto.menuName());
@@ -103,7 +110,7 @@ public class MenuService {
     @Transactional
     public void deleteMenu(UUID storeId, UUID menuId, String username) {
         Menu menu = menuRepository.findByStoreStoreIdAndMenuId(storeId, menuId)
-                .orElseThrow(() -> new NotFoundException("MENU NOT FOUND"));
+                .orElseThrow(() -> new BusinessException(MenuErrorCode.NOT_FOUND_MENU));
 
         menu.auditDelete(username);
     }
@@ -138,7 +145,7 @@ public class MenuService {
     @Transactional(readOnly = true)
     public MenuDetailResponse getMenuDetail(UUID storeId, UUID menuId) {
         Menu menu = menuRepository.findByStoreStoreIdAndMenuId(storeId, menuId)
-                .orElseThrow(() -> new NotFoundException("MENU NOT FOUND"));
+                .orElseThrow(() -> new BusinessException(MenuErrorCode.NOT_FOUND_MENU));
 
         return MenuDetailResponse.from(menu);
     }

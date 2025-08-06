@@ -17,6 +17,7 @@ public enum BusinessErrorCode implements DefaultErrorCode {
     CALCULATION_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "계산 중 오류가 발생했습니다."),
     EMPTY_SEARCH_RESULT(HttpStatus.NOT_FOUND, "검색 결과가 없습니다."),
     NOT_FOUND_CATEGORY(HttpStatus.NOT_FOUND , "해당 카테고리가 존재하지 않습니다."),
+    ALREADY_EXISTS(HttpStatus.CONFLICT,"이미 존재하는 정보 입니다."),
     ;
 
     private HttpStatus httpStatus;
