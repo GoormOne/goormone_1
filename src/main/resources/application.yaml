@@ -10,7 +10,7 @@ spring:
   datasource:
 
 
-    url: jdbc:postgresql://43.200.244.12/sample
+    url: jdbc:postgresql://13.124.201.205:5432/sample
 
     driver-class-name: org.postgresql.Driver
     username: postgres
