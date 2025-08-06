@@ -3,15 +3,16 @@ spring:
     name: sample-project
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/sample
+    url: jdbc:postgresql://localhost:5432/sample # (공용)  jdbc:postgresql://43.200.244.12:5432/sample
+                                                # (로컬용) jdbc:postgresql://localhost:5432/sample
     driver-class-name: org.postgresql.Driver
-    username: user
+    username: user  # (공용) postgres # (로컬용) user
     password: password
 
 
   jpa:
     hibernate:
-      ddl-auto: create  # Hibernate가 테이블 생성 안 하도록 설정
+      ddl-auto: update  # Hibernate가 테이블 생성 안 하도록 설정 - none
     show-sql: true
     properties:
       hibernate:
@@ -20,7 +21,7 @@ spring:
 
   sql:
     init:
-      mode: never
+      mode: never  # never
       schema-locations: classpath:schema.sql  # 테이블 생성 쿼리
       data-locations: classpath:data.sql      # 초기 데이터 삽입
 
@@ -28,3 +29,8 @@ spring:
     time-zone: Asia/Seoul
     serialization:
       write-dates-as-timestamps: false
+
+ai:
+  gemini:
+    url: https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent
+    key: AIzaSyDW05qtNXF9DO97LC9fjd11V7oBuZNqa5A

@@ -214,7 +214,8 @@ CREATE TABLE "p_review_summary" (
   "avg_rating" decimal(3,2) NOT NULL,
   "summary_text" text NOT NULL,
   "created_at" timestamp NOT NULL,
-  "created_by" varchar(10) NOT NULL
+  "created_by" varchar(10) NOT NULL,
+  "summary_version" bigint NOT NULL DEFAULT 0
 );
 
 CREATE TABLE "p_payments" (

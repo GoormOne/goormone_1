@@ -90,10 +90,10 @@ FROM p_orders o, p_menus m LIMIT 2;
 
 -- user001의 리뷰 21개 (rating: 1~5 랜덤, comment: 다양하게) 생성
 INSERT INTO p_reviews (review_id, store_id, user_id, rating, comment, is_public, created_at, created_by)
-SELECT gen_random_uuid(), s.store_id, 'user001',
+SELECT gen_random_uuid(), s.store_id, 'U000000001',
        floor(random() * 5 + 1)::int,
        c.comment,
-       true, now(), 'user001'
+       true, now(), 'U000000001'
 FROM (
          SELECT unnest(ARRAY[
              '매장이 깔끔해요', '친절해요', '음식이 맛있어요', '재방문하고 싶어요',
@@ -105,21 +105,21 @@ FROM (
              '재료가 신선해요', '위생이 좋아요'
              ]) AS comment
      ) c
-         CROSS JOIN (SELECT store_id FROM p_stores LIMIT 3) s;
+         CROSS JOIN (SELECT store_id FROM p_stores LIMIT 1) s;
 
 
 -- user002의 리뷰 2개 생성
 INSERT INTO p_reviews (review_id, store_id, user_id, rating, comment, is_public, created_at, created_by)
-SELECT gen_random_uuid(), store_id, 'user002',
+SELECT gen_random_uuid(), store_id, 'U000000002',
        floor(random() * 5 + 1)::int,
        unnest(ARRAY['보통이에요', '아쉬웠어요']) AS comment,
-       true, now(), 'user002'
+       true, now(), 'U000000002'
 FROM p_stores
 LIMIT 1;
 
 
 -- INSERT INTO p_review_summary
-INSERT INTO p_review_summary (batch_id, store_id, period_start, period_end, review_cnt, avg_rating, summary_text, created_at, created_by)
+INSERT INTO p_review_summary (batch_id, store_id, summary_refresh_date, summary_text, created_at, created_by)
 SELECT gen_random_uuid(), store_id, '2025-01-01', '2025-01-31', 2, 4.5, '좋은 평가', now(), 'system' FROM p_stores LIMIT 2;
 
 -- INSERT INTO p_payments

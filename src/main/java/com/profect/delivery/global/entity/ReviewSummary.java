@@ -25,13 +25,10 @@ public class ReviewSummary {
     @Column(name = "store_id", nullable = false)
     private UUID storeId;
 
-    @Column(name = "period_start", nullable = false)
-    private LocalDate periodStart;
+    @Column (name = "summary_refresh_date", nullable = false)
+    private LocalDate summaryRefreshDate;
 
-    @Column(name = "period_end", nullable = false)
-    private LocalDate periodEnd;
-
-    @Column(name = "summary_text")
+    @Column(name = "summary_text", nullable = false)
     private String summaryText;
 
     @Column(name = "created_at", nullable = false)
@@ -39,4 +36,8 @@ public class ReviewSummary {
 
     @Column(name = "created_by", length = 10)
     private String createdBy;
+
+    @Version
+    @Column(name="summary_version", nullable = false)
+    private Long version;
 }

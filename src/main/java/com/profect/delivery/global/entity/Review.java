@@ -28,7 +28,9 @@ public class Review {
     @Column(name = "user_id", nullable = false, length = 10)
     private String userId; // FK로 연결 예정
 
-    // store_name
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", referencedColumnName = "user_id", insertable = false, updatable = false)
+    private User user;
 
     @Column(name = "rating", nullable = false)
     private Short rating; // SMALLINT
