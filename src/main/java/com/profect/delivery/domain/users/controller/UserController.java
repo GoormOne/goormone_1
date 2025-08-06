@@ -29,17 +29,17 @@ import java.util.stream.Collectors;
 
 
         @GetMapping
-        public ResponseEntity<ApiResponse<UserResponseDto>> getUser(HttpServletRequest request) {
-            String currentUserId = request.getParameter("userId");;//인증인가 가져오면 유저 id 추출
+        public ResponseEntity<ApiResponse<UserResponseDto>> getUser() {
+            String currentUserId = "U000000001";//인증인가 가져오면 유저 id 추출
             UserResponseDto userDto = userService.getUserById(currentUserId);
             return  new ResponseEntity<>(ApiResponse.success(userDto), HttpStatus.OK);
         }
 
 
         @PatchMapping
-        public ResponseEntity<ApiResponse<?>> patchUser(HttpServletRequest request,
+        public ResponseEntity<ApiResponse<?>> patchUser(
                @Valid @RequestBody UserUpdateRequestDto userUpdateRequestDto) {
-            String currentUserId = request.getParameter("userId");;//인증인가에서 가져온 유저 id
+            String currentUserId = "U000000001";;//인증인가에서 가져온 유저 id
             String updateby="user";//인증인가에서 가져온 업데이트한 사람
             userService.updateUser(userUpdateRequestDto,currentUserId,updateby);
             return  new ResponseEntity<>(ApiResponse.success(null), HttpStatus.OK);
@@ -49,16 +49,16 @@ import java.util.stream.Collectors;
 
 
         @GetMapping("/addresses")
-        public ResponseEntity<ApiResponse<List<UserAddressesResponseDto>>> getUserAddresses(HttpServletRequest request) {
-            String currentUserId = request.getParameter("userId");
+        public ResponseEntity<ApiResponse<List<UserAddressesResponseDto>>> getUserAddresses() {
+            String currentUserId = "U000000001";
             List<UserAddressesResponseDto> addressesDto = userAddressService.findByUserId(currentUserId);
             return new ResponseEntity<>(ApiResponse.success(addressesDto), HttpStatus.OK);
         }
 
         @PostMapping("/addresses")
-        public ResponseEntity<ApiResponse<?>> postUserAddressses(HttpServletRequest request,
+        public ResponseEntity<ApiResponse<?>> postUserAddressses(
                 @RequestBody UserAddressesRequestDto userAddressesRequestDto) {
-            String currentUserId = request.getParameter("userId");
+            String currentUserId = "U000000001";
             userAddressService.CreateUserAddress(userAddressesRequestDto,currentUserId);
             return  new ResponseEntity<>(ApiResponse.success(null), HttpStatus.CREATED);
         }
