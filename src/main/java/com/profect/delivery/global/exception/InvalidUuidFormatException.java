@@ -5,3 +5,4 @@ public class InvalidUuidFormatException extends RuntimeException {
         super(message);
     }
 }
+

@@ -8,9 +8,13 @@ import com.profect.delivery.domain.cart.repository.CartItemRepository;
 import com.profect.delivery.domain.cart.repository.CartRepository;
 import com.profect.delivery.global.entity.Cart;
 import com.profect.delivery.global.entity.CartItem;
-import com.profect.delivery.global.exception.InvalidUuidFormatException;
-import com.profect.delivery.global.exception.NotFoundException;
+import com.profect.delivery.global.entity.Order;
+import com.profect.delivery.global.exception.BusinessException;
 
+
+
+import com.profect.delivery.global.exception.custom.OrderErrorCode;
+import com.profect.delivery.global.exception.custom.StoreErrorCode;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +40,7 @@ public class CartService {
         try {
             storeUuid = UUID.fromString(storeId);
         }catch (IllegalArgumentException e){
-            throw new InvalidUuidFormatException("storeId is not valid");
+            throw new BusinessException(StoreErrorCode.NOT_FOUND_STORE);
         }
 
         Cart cart = new Cart();
@@ -69,7 +73,7 @@ public class CartService {
 
         List<Cart> carts = cartRepository.findByUserId(userId);
         if (carts.isEmpty()) {
-            throw new NotFoundException("해당 사용자의 카트가 존재하지 않습니다.");
+            throw new BusinessException(OrderErrorCode.NOT_FOUND_CART);
         }
         return carts;
 
@@ -134,7 +138,7 @@ public class CartService {
     @Transactional
     public boolean updateCartItem(UUID cartItemId, List<AddCartDto> addCartList, String userId) {
         CartItem cartItem = cartItemRepository.findById(cartItemId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 CartItem이 존재하지 않습니다."));
+                .orElseThrow(() -> new BusinessException(OrderErrorCode.NOT_FOUND_ITEM ));
 
         try{
             for (AddCartDto dto : addCartList) {

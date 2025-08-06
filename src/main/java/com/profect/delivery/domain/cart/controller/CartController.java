@@ -72,7 +72,7 @@ public class CartController {
     }
 
     // 카트 삭제
-    @DeleteMapping("/")
+    @DeleteMapping
     public ResponseEntity<ApiResponse<Void>> deleteCart(String cartId){
         UUID cartUuid = UUID.fromString(cartId);
 

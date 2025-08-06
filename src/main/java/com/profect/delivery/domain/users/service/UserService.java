@@ -4,7 +4,6 @@ import com.profect.delivery.domain.users.dto.UserResponseDto;
 import com.profect.delivery.domain.users.dto.UserUpdateRequestDto;
 import com.profect.delivery.domain.users.repository.UserRepository;
 import com.profect.delivery.global.exception.BusinessException;
-import com.profect.delivery.global.exception.UserNotFoundException;
 import com.profect.delivery.global.entity.User;
 import com.profect.delivery.global.exception.custom.UserErrorCode;
 import lombok.RequiredArgsConstructor;

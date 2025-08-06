@@ -10,21 +10,22 @@ spring:
   datasource:
 
 
-    url: jdbc:postgresql://43.200.244.12/sample
+    url: jdbc:postgresql://13.124.201.205:5432/sample
 
     driver-class-name: org.postgresql.Driver
     username: postgres
     password: password
+
   jpa:
     hibernate:
 
       ddl-auto: none
 
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
-        format_sql: true
-        highlight_sql: true
+        format_sql: false
+        highlight_sql: false
 
   sql:
     init:
@@ -36,3 +37,7 @@ spring:
     time-zone: Asia/Seoul
     serialization:
       write-dates-as-timestamps: false
+logging:
+  level:
+    org.springframework.web: INFO
+    org.springframework.web.servlet.DispatcherServlet: DEBUG

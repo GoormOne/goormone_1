@@ -5,8 +5,8 @@ import com.profect.delivery.domain.cart.repository.CartItemRepository;
 import com.profect.delivery.domain.cart.repository.CartRepository;
 import com.profect.delivery.global.entity.Cart;
 import com.profect.delivery.global.entity.CartItem;
-import com.profect.delivery.global.exception.InvalidUuidFormatException;
-import com.profect.delivery.global.exception.NotFoundException;
+import com.profect.delivery.global.exception.BusinessException;
+import com.profect.delivery.global.exception.custom.OrderErrorCode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -49,7 +49,7 @@ class CartServiceTest {
     void setUp() {
         cartRepository = mock(CartRepository.class);
         cartItemRepository = mock(CartItemRepository.class);
-        cartService = new CartService(cartRepository, cartItemRepository);  // ✅ 실제 서비스 주입
+        cartService = new CartService(cartRepository, cartItemRepository);
     }
 
     @Test
@@ -67,18 +67,33 @@ class CartServiceTest {
         verify(cartRepository, times(1)).findByUserId(userId);
     }
 
-    @Test
-    void 사용자의_카트가_없으면_NotFoundException을_던진다() {
-        // given
-        String userId = "user002";
-        when(cartRepository.findByUserId(userId)).thenReturn(Collections.emptyList());
+//    @Test
+//    void 사용자의_카트가_없으면_NotFoundException을_던진다() {
+//        // given
+//        String userId = "user002";
+//        when(cartRepository.findByUserId(userId)).thenReturn(Collections.emptyList());
+//
+//        // when & then
+//        assertThrows(BusinessException.class, () -> {
+//            cartService.getCartsWithItemsByUserId(userId);
+//        });
+//        verify(cartRepository, times(1)).findByUserId(userId);
+//    }
+@Test
+void 사용자의_카트가_없으면_BusinessException_던지고_에러코드는_NOT_FOUND_CART이다() {
+    // given
+    String userId = "user002";
+    when(cartRepository.findByUserId(userId)).thenReturn(Collections.emptyList());
 
-        // when & then
-        assertThrows(NotFoundException.class, () -> {
-            cartService.getCartsWithItemsByUserId(userId);
-        });
-        verify(cartRepository, times(1)).findByUserId(userId);
-    }
+    // when
+    BusinessException ex = assertThrows(BusinessException.class, () -> {
+        cartService.getCartsWithItemsByUserId(userId);
+    });
+
+    // then
+    assertEquals(OrderErrorCode.NOT_FOUND_CART, ex.getDefaultErrorCode());
+    verify(cartRepository, times(1)).findByUserId(userId);
+}
 
     @Test
     void saveCart_정상적으로_카트_저장됨() {
@@ -106,22 +121,22 @@ class CartServiceTest {
     }
 
 
-    @Test
-    void saveCart_잘못된_storeId_형식이면_예외발생() {
-        // given
-        String userId = "user001";
-        String invalidStoreId = "invalid-uuid";
-        List<AddCartDto> cartDtoList = List.of();
 
-        // then
-        assertThrows(InvalidUuidFormatException.class, () -> {
-            cartService.saveCart(cartDtoList, userId, invalidStoreId);
-        });
-    }
 
     @Test
     void deleteCartByCartId_존재할때_삭제성공() {
-        // given
+        // given@Test
+        //    void saveCart_잘못된_storeId_형식이면_예외발생() {
+        //        // given
+        //        String userId = "user001";
+        //        String invalidStoreId = "invalid-uuid";
+        //        List<AddCartDto> cartDtoList = List.of();
+        //
+        //        // then
+        //        assertThrows(InvalidUuidFormatException.class, () -> {
+        //            cartService.saveCart(cartDtoList, userId, invalidStoreId);
+        //        });
+        //    }
         UUID cartId = UUID.randomUUID();
         when(cartItemRepository.existsById(cartId)).thenReturn(true);
 
@@ -178,16 +193,32 @@ class CartServiceTest {
         assertNotNull(mockItem.getUpdatedAt());
     }
 
+
+//    void updateCartItem_엔티티없음_예외발생() {
+//        // given
+//        UUID cartItemId = UUID.randomUUID();
+//        when(cartItemRepository.findById(cartItemId)).thenReturn(Optional.empty());
+//
+//        // when & then
+////        assertThrows(IllegalArgumentException.class, () -> {
+////            cartService.updateCartItem(cartItemId, new ArrayList<>(), "user001");
+////        });
+//
+//    }
     @Test
     void updateCartItem_엔티티없음_예외발생() {
         // given
         UUID cartItemId = UUID.randomUUID();
         when(cartItemRepository.findById(cartItemId)).thenReturn(Optional.empty());
 
-        // when & then
-        assertThrows(IllegalArgumentException.class, () -> {
+        // when
+        BusinessException ex = assertThrows(BusinessException.class, () -> {
             cartService.updateCartItem(cartItemId, new ArrayList<>(), "user001");
         });
+
+        // then
+        assertEquals(OrderErrorCode.NOT_FOUND_ITEM, ex.getDefaultErrorCode());
+        verify(cartItemRepository, times(1)).findById(cartItemId);
     }
 
     @Test

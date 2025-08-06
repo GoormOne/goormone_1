@@ -32,7 +32,7 @@ public class OrderController {
 private final OrderService orderService;
 
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<ApiResponse<?>> getOrdersList(HttpServletRequest request){
         String userId = request.getParameter("userId");
         if (userId == null){
