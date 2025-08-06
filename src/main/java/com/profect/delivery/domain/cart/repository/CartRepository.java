@@ -11,9 +11,6 @@ import java.util.UUID;
 @Repository
 public interface CartRepository extends CrudRepository<Cart, UUID> {
 
-
-    List<Cart> findCartByUserId(String userId);
-
     @EntityGraph(attributePaths = "cartItems")
     List<Cart> findByUserId(String userId);
 

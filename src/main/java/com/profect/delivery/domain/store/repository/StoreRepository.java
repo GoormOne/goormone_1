@@ -20,12 +20,12 @@ public interface StoreRepository extends JpaRepository<Store, UUID> {
     List<Store> findByStoreIdIn(List<UUID> storeIds);
 
     @Query(value = """
-    SELECT region_id
-    FROM p_regions
-    WHERE region_1depth_name = :address1
-      AND region_2depth_name = :address2
-      AND region_3depth_name = :address3
-    """, nativeQuery = true)
+        SELECT region_id
+        FROM p_regions
+        WHERE region_1depth_name = :address1
+          AND region_2depth_name = :address2
+          AND region_3depth_name = :address3
+        """, nativeQuery = true)
     UUID findRegionIdByFullAddress(
             @Param("address1") String address1,
             @Param("address2") String address2,

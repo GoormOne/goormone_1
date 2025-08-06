@@ -5,8 +5,6 @@ import com.profect.delivery.domain.users.service.UserAddressService;
 import com.profect.delivery.domain.users.service.UserService;
 import com.profect.delivery.global.dto.ApiResponse;
 import com.profect.delivery.global.exception.BusinessException;
-import com.profect.delivery.global.exception.UserAddressNotFoundException;
-import com.profect.delivery.global.exception.UserNotFoundException;
 import com.profect.delivery.global.exception.custom.UserErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -50,7 +48,7 @@ import java.util.stream.Collectors;
 
         @GetMapping("/addresses")
         public ResponseEntity<ApiResponse<List<UserAddressesResponseDto>>> getUserAddresses() {
-            String currentUserId = "U000000001";
+            String currentUserId = "U000000011";
             List<UserAddressesResponseDto> addressesDto = userAddressService.findByUserId(currentUserId);
             return new ResponseEntity<>(ApiResponse.success(addressesDto), HttpStatus.OK);
         }
@@ -58,7 +56,7 @@ import java.util.stream.Collectors;
         @PostMapping("/addresses")
         public ResponseEntity<ApiResponse<?>> postUserAddressses(
                 @RequestBody UserAddressesRequestDto userAddressesRequestDto) {
-            String currentUserId = "U000000001";
+            String currentUserId = "U000000011";
             userAddressService.CreateUserAddress(userAddressesRequestDto,currentUserId);
             return  new ResponseEntity<>(ApiResponse.success(null), HttpStatus.CREATED);
         }

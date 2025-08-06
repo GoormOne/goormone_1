@@ -9,7 +9,8 @@ spring:
 
   datasource:
 
-    url: jdbc:postgresql://13.124.201.205/sample
+
+    url: jdbc:postgresql://13.124.201.205:5432/sample
 
     driver-class-name: org.postgresql.Driver
     username: postgres
@@ -17,12 +18,14 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: none  # Hibernate가 테이블 생성 안 하도록 설정
-    show-sql: true
+
+      ddl-auto: none
+
+    show-sql: false
     properties:
       hibernate:
-        format_sql: true
-        highlight_sql: true
+        format_sql: false
+        highlight_sql: false
 
   sql:
     init:
@@ -34,3 +37,7 @@ spring:
     time-zone: Asia/Seoul
     serialization:
       write-dates-as-timestamps: false
+logging:
+  level:
+    org.springframework.web: INFO
+    org.springframework.web.servlet.DispatcherServlet: DEBUG

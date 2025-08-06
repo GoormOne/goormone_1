@@ -1,4 +1,3 @@
-// 리뷰 목록 전체에 대한 응답 // 완료
 package com.profect.delivery.domain.review.dto;
 
 import lombok.*;
@@ -14,9 +13,7 @@ import java.util.UUID;
 @Builder
 public class ReviewListResponseDto {
     private UUID storeId;
-    //    private String storeName;
-//    private double averageRating;
     private int totalReviews;
+    private String summaryText;
     private List<ReviewResponseDto> reviews;    // reviews 라는 리뷰 객체들의 목록을 담는 필드, ReviewDto 객체를 여러개 담는 리스트
-
 }
